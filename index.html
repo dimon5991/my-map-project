@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Локації постачальників, розробників та глобальної логістики</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    
+    <!-- Підключення зовнішнього CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+    <div class="controls-container">
+        <!-- Меню вибору головного шару -->
+        <div class="dropdown-panel" id="dropdownPanelMain">
+            <button class="dropdown-btn" onclick="toggleDropdown('dropdownPanelMain')">
+                <span id="selectedOptionMain">🤖 Boston Dynamics</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-content">
+                <button class="dropdown-item active" id="item-robots" onclick="selectOption('robots')">🤖 Boston Dynamics</button>
+                <button class="dropdown-item" id="item-construction" onclick="selectOption('construction')">🏗️ Будівельні компанії & Цемент США</button>
+                <button class="dropdown-item" id="item-canada-construction" onclick="selectOption('canada-construction')">🇨🇦 Будівництво (Канада)</button>
+                <button class="dropdown-item" id="item-india-cement" onclick="selectOption('india-cement')">🧱 Будівельні компанії Індії та цементні заводи</button>
+                <button class="dropdown-item" id="item-wire-logistics" onclick="selectOption('wire-logistics')">🏭 Дріт та 🚢 Логістика</button>
+                <button class="dropdown-item" id="item-routes" onclick="selectOption('routes')">🚚 Ланцюги постачання</button>
+                <button class="dropdown-item" id="item-japan" onclick="selectOption('japan')">⚡ Електростанції Японії</button>
+            </div>
+        </div>
+
+        <!-- Підвкладки з енергетичними компаніями Японії -->
+        <div class="dropdown-panel" id="dropdownPanelSub" style="display: none;">
+            <button class="dropdown-btn" onclick="toggleDropdown('dropdownPanelSub')">
+                <span id="selectedOptionSub">🏢 Всі компанії</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-content" id="subDropdownContent"></div>
+        </div>
+    </div>
+
+    <!-- Заголовок -->
+    <div class="info-panel">
+        <h1 id="panel-title">Ключові локації та ланцюжки постачання Boston Dynamics</h1>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+
+    <!-- Головний модуль JS -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

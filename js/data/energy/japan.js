@@ -1,0 +1,1 @@
+export const japanCompanies = [ /* ... дані масиву japanCompanies з index.html ... */ ];
