@@ -189,3 +189,21 @@ function renderIndiaCementWithLogistics() {
 
             map.flyTo([20.5937, 78.9629], 5);
         }
+
+
+function renderGenericConstructionCountry(country) {
+    clearLayers();
+    const data = window.countryData.construction?.[country]?.constructionLocations || [];
+    data.forEach(loc => {
+        const icon = L.divIcon({
+            html: '<div class="custom-marker-wrapper"><div class="marker-dot dot-robot"></div></div>',
+            className: '',
+            iconSize: [18,18],
+            iconAnchor: [9,9]
+        });
+        const marker = L.marker(loc.coords, {icon}).addTo(map);
+        marker.bindPopup('<div class="popup-card"><h3>' + (loc.title || 'Локація') + '</h3><div>' + (loc.text || '') + '</div></div>', {maxWidth:310,minWidth:290});
+        currentMarkers.push(marker);
+    });
+    if (data.length) map.fitBounds(L.latLngBounds(data.map(x => x.coords)), {padding:[40,40]});
+}
