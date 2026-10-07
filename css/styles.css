@@ -74,10 +74,11 @@
         /* Верхній заголовок */
         .info-panel {
             position: absolute;
-            top: 20px;
+            top: 88px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
+            z-index: 900;
+            max-width: min(70vw, 900px);
             background: rgba(12, 16, 23, 0.9);
             backdrop-filter: blur(8px);
             padding: 12px 28px;
