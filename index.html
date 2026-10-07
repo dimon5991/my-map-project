@@ -17,22 +17,27 @@
 <body>
 
     <div class="controls-container">
-        <!-- Меню вибору головного шару -->
         <div class="dropdown-panel" id="dropdownPanelMain">
             <button class="dropdown-btn" onclick="toggleDropdown('dropdownPanelMain')">
-                <span id="selectedOptionMain">🤖 Boston Dynamics</span>
+                <span id="selectedOptionMain">🤖 Робототехніка</span>
                 <span class="dropdown-arrow">▼</span>
             </button>
             <div class="dropdown-content">
-                <button class="dropdown-item active" id="item-robots" onclick="selectOption('robots')">🤖 Boston Dynamics</button>
-                <button class="dropdown-item" id="item-construction" onclick="selectOption('construction')">🏗️ Будівельні компанії & Цемент США</button>
-                <button class="dropdown-item" id="item-canada-construction" onclick="selectOption('canada-construction')">🇨🇦 Будівництво (Канада)</button>
-                <button class="dropdown-item" id="item-india-cement" onclick="selectOption('india-cement')">🧱 Будівельні компанії Індії та цементні заводи</button>
-                <button class="dropdown-item" id="item-wire-logistics" onclick="selectOption('wire-logistics')">🏭 Дріт та 🚢 Логістика</button>
-                <button class="dropdown-item" id="item-routes" onclick="selectOption('routes')">🚚 Ланцюги постачання</button>
-                <button class="dropdown-item" id="item-japan" onclick="selectOption('japan')">⚡ Електростанції Японії</button>
+                <button class="dropdown-item active" id="item-robots" onclick="selectOption('robots')">🤖 Робототехніка</button>
+                <button class="dropdown-item" id="item-construction" onclick="selectOption('construction')">🏗️ Будівництво</button>
+                <button class="dropdown-item" id="item-energy" onclick="selectOption('energy')">⚡ Енергетика</button>
+                <button class="dropdown-item" id="item-minerals" onclick="selectOption('minerals')">⛏️ Мінерали</button>
             </div>
         </div>
+
+        <div class="dropdown-panel" id="dropdownPanelSub" style="display: none;">
+            <button class="dropdown-btn" onclick="toggleDropdown('dropdownPanelSub')">
+                <span id="selectedOptionSub">Оберіть підрозділ</span>
+                <span class="dropdown-arrow">▼</span>
+            </button>
+            <div class="dropdown-content" id="subDropdownContent"></div>
+        </div>
+    </div>
 
         <!-- Підвкладки з енергетичними компаніями Японії -->
         <div class="dropdown-panel" id="dropdownPanelSub" style="display: none;">
