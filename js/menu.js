@@ -1,112 +1,258 @@
 function buildSubDropdownMenu() {
-            const subContainer = document.getElementById('subDropdownContent');
-            let html = `<button class="dropdown-item active" id="sub-all" onclick="selectCompany('all')">🏢 Всі компанії</button>`;
-            
-            (window.countryData.energy?.japan?.japanCompanies || []).forEach(comp => {
-                html += `
-                    <button class="dropdown-item" id="sub-${comp.id}" onclick="selectCompany('${comp.id}')">
-                        <span class="company-color-indicator" style="background-color: ${comp.color};"></span>
-                        ${comp.name}
-                    </button>
-                `;
-            });
-
-            subContainer.innerHTML = html;
-        }
+    const subContainer = document.getElementById('subDropdownContent');
+    if (!subContainer) return;
+    subContainer.innerHTML = '';
+}
 
 function toggleDropdown(id) {
-            const panel = document.getElementById(id);
-            panel.classList.toggle('open');
-        }
+    const panel = document.getElementById(id);
+    if (panel) panel.classList.toggle('open');
+}
 
 window.addEventListener('click', function(e) {
-    ['dropdownPanelMain', 'dropdownPanelSub'].forEach(id => {
+    ['dropdownPanelMain', 'dropdownPanelSub', 'dropdownPanelThird'].forEach(id => {
         const panel = document.getElementById(id);
         if (panel && !panel.contains(e.target)) panel.classList.remove('open');
     });
 });
 
+function showSubMenu(items) {
+    const panel = document.getElementById('dropdownPanelSub');
+    const content = document.getElementById('subDropdownContent');
+    if (!panel || !content) return;
+
+    content.innerHTML = items.map(item =>
+        '<button class="dropdown-item" onclick="' + item.action + '">' + item.label + '</button>'
+    ).join('');
+
+    panel.style.display = 'block';
+    panel.classList.remove('open');
+}
+
+function hideSubMenu() {
+    const panel = document.getElementById('dropdownPanelSub');
+    if (panel) {
+        panel.style.display = 'none';
+        panel.classList.remove('open');
+    }
+}
+
+function setMainSelection(text) {
+    const selectedText = document.getElementById('selectedOptionMain');
+    if (selectedText) selectedText.innerText = text;
+}
+
 function selectOption(type) {
-            const title = document.getElementById('panel-title');
-            const selectedText = document.getElementById('selectedOptionMain');
-            const itemRobots = document.getElementById('item-robots');
-            const itemConstruction = document.getElementById('item-construction');
-            const itemCanadaConstruction = document.getElementById('item-canada-construction');
-            const itemIndiaCement = document.getElementById('item-india-cement');
-            const itemWireLogistics = document.getElementById('item-wire-logistics');
-            const itemRoutes = document.getElementById('item-routes');
-            const itemJapan = document.getElementById('item-japan');
-            const subPanel = document.getElementById('dropdownPanelSub');
+    const title = document.getElementById('panel-title');
+    const itemRobots = document.getElementById('item-robots');
+    const itemConstruction = document.getElementById('item-construction');
+    const itemEnergy = document.getElementById('item-energy');
+    const itemMinerals = document.getElementById('item-minerals');
 
-            [itemRobots, itemConstruction, itemCanadaConstruction, itemIndiaCement, itemWireLogistics, itemRoutes, itemJapan].forEach(el => {
-                if (el) el.classList.remove('active');
-            });
+    [itemRobots, itemConstruction, itemEnergy, itemMinerals].forEach(el => {
+        if (el) el.classList.remove('active');
+    });
 
-            if (type === 'robots') {
-                selectedText.innerText = "🤖 Boston Dynamics";
-                itemRobots.classList.add('active');
-                title.innerText = "Ключові локації та ланцюжки постачання Boston Dynamics";
-                subPanel.style.display = 'none';
-                renderScene('robots');
-                map.setView([25, 10], 3);
-            } else if (type === 'construction') {
-                selectedText.innerText = "🏗️ Будівельні компанії & Цемент";
-                itemConstruction.classList.add('active');
-                title.innerText = "Будівельні компанії та цементні заводи США з логістичними лініями";
-                subPanel.style.display = 'none';
-                renderConstructionView();
-            } else if (type === 'canada-construction') {
-                selectedText.innerText = "🇨🇦 Будівництво (Канада)";
-                if (itemCanadaConstruction) itemCanadaConstruction.classList.add('active');
-                title.innerText = "Будівельні компанії, цементні заводи та логістичні зв'язки в Канаді";
-                subPanel.style.display = 'none';
-                renderCanadaConstructionWithSupplyChain();
-            } else if (type === 'india-cement') {
-                selectedText.innerText = "🧱 Будівельні компанії Індії та цементні заводи";
-                if (itemIndiaCement) itemIndiaCement.classList.add('active');
-                title.innerText = "Будівельні компанії Індії, цементні заводи та логістичні лінії постачання";
-                subPanel.style.display = 'none';
-                renderIndiaCementWithLogistics();
-            } else if (type === 'wire-logistics') {
-                selectedText.innerText = "🏭 Дріт та 🚢 Логістика";
-                itemWireLogistics.classList.add('active');
-                title.innerText = "Виробництво дроту (Китай) та Глобальна Логістика";
-                subPanel.style.display = 'none';
-                renderWireLogisticsView();
-            } else if (type === 'routes') {
-                selectedText.innerText = "🚚 Ланцюги постачання";
-                itemRoutes.classList.add('active');
-                title.innerText = "Глобальні ланцюги: Мідь → Деталі → Продукція (Індонезія, Японія, США, ФРН, Китай, Корея)";
-                subPanel.style.display = 'none';
-                renderFullSupplyChain();
-            } else if (type === 'japan') {
-                selectedText.innerText = "⚡ Електростанції Японії";
-                itemJapan.classList.add('active');
-                title.innerText = "Мережі електростанцій енергетичних компаній Японії";
-                subPanel.style.display = 'block';
-                renderJapanPowerPlantsView();
+    hideSubMenu();
+
+    if (type === 'robots') {
+        setMainSelection('🤖 Робототехніка');
+        itemRobots.classList.add('active');
+        title.innerText = 'Ключові локації та ланцюжки постачання Boston Dynamics';
+        renderScene('robots');
+        map.setView([25, 10], 3);
+
+    } else if (type === 'construction') {
+        setMainSelection('🏗️ Будівництво');
+        itemConstruction.classList.add('active');
+        title.innerText = 'Будівництво';
+        showSubMenu([
+            {
+                label: '🇺🇸 США',
+                action: "selectConstructionCountry('usa')"
+            },
+            {
+                label: '🇨🇦 Канада',
+                action: "selectConstructionCountry('canada')"
+            },
+            {
+                label: '🇮🇳 Індія',
+                action: "selectConstructionCountry('india')"
             }
+        ]);
 
-            document.getElementById('dropdownPanelMain').classList.remove('open');
+    } else if (type === 'energy') {
+        setMainSelection('⚡ Енергетика');
+        itemEnergy.classList.add('active');
+        title.innerText = 'Енергетика';
+        showSubMenu([
+            {
+                label: '🇯🇵 Японія',
+                action: "selectEnergyCountry('japan')"
+            }
+        ]);
+
+    } else if (type === 'minerals') {
+        setMainSelection('⛏️ Мінерали');
+        itemMinerals.classList.add('active');
+        title.innerText = 'Мінерали';
+        showSubMenu([
+            {
+                label: '🔶 Мідь',
+                action: "selectMineral('copper')"
+            }
+        ]);
+    }
+
+    document.getElementById('dropdownPanelMain').classList.remove('open');
+}
+
+function selectConstructionCountry(country) {
+    const title = document.getElementById('panel-title');
+
+    if (country === 'usa') {
+        title.innerText = 'Будівельні компанії та цементні заводи США з логістичними лініями';
+        showSubMenu([
+            {
+                label: '🏗️ Будівельні компанії США & Цемент США',
+                action: "selectConstructionScene('usa')"
+            }
+        ]);
+    } else if (country === 'canada') {
+        title.innerText = 'Будівельні компанії, цементні заводи та логістичні зв\'язки в Канаді';
+        showSubMenu([
+            {
+                label: '🏗️ Будівництво (Канада)',
+                action: "selectConstructionScene('canada')"
+            }
+        ]);
+    } else if (country === 'india') {
+        title.innerText = 'Будівельні компанії Індії, цементні заводи та логістичні лінії постачання';
+        showSubMenu([
+            {
+                label: '🧱 Будівельні компанії Індії та цементні заводи',
+                action: "selectConstructionScene('india')"
+            }
+        ]);
+    }
+}
+
+function selectConstructionScene(country) {
+    hideSubMenu();
+
+    if (country === 'usa') {
+        document.getElementById('panel-title').innerText =
+            'Будівельні компанії та цементні заводи США з логістичними лініями';
+        renderConstructionView();
+    } else if (country === 'canada') {
+        document.getElementById('panel-title').innerText =
+            'Будівельні компанії, цементні заводи та логістичні зв\'язки в Канаді';
+        renderCanadaConstructionWithSupplyChain();
+    } else if (country === 'india') {
+        document.getElementById('panel-title').innerText =
+            'Будівельні компанії Індії, цементні заводи та логістичні лінії постачання';
+        renderIndiaCementWithLogistics();
+    }
+}
+
+function selectEnergyCountry(country) {
+    if (country !== 'japan') return;
+
+    const title = document.getElementById('panel-title');
+    title.innerText = 'Мережі електростанцій енергетичних компаній Японії';
+    showSubMenu([
+        {
+            label: '⚡ Електростанції Японії',
+            action: "selectEnergyScene('japan')"
         }
+    ]);
+}
+
+function selectEnergyScene(country) {
+    if (country !== 'japan') return;
+
+    hideSubMenu();
+
+    const panel = document.getElementById('dropdownPanelSub');
+    const content = document.getElementById('subDropdownContent');
+
+    // Після вибору Японії зберігаємо існуючий фільтр енергетичних компаній.
+    content.innerHTML =
+        '<button class="dropdown-item active" id="sub-all" onclick="selectCompany(\'all\')">🏢 Всі компанії</button>' +
+        (window.countryData.energy?.japan?.japanCompanies || []).map(comp =>
+            '<button class="dropdown-item" id="sub-' + comp.id + '" onclick="selectCompany(\'' + comp.id + '\')">' +
+            '<span class="company-color-indicator" style="background-color: ' + comp.color + ';"></span>' +
+            comp.name +
+            '</button>'
+        ).join('');
+
+    panel.style.display = 'block';
+    renderJapanPowerPlantsView();
+}
+
+function selectMineral(type) {
+    if (type !== 'copper') return;
+
+    document.getElementById('panel-title').innerText = 'Мідь';
+    showSubMenu([
+        {
+            label: '🇯🇵 Японія',
+            action: "selectCopperCountry('japan')"
+        },
+        {
+            label: '🇮🇩 Індонезія',
+            action: "selectCopperCountry('indonesia')"
+        }
+    ]);
+}
+
+function selectCopperCountry(country) {
+    const title = document.getElementById('panel-title');
+
+    if (country === 'japan') {
+        title.innerText = 'Мідь — Японія';
+        hideSubMenu();
+        renderScene('minerals');
+    } else if (country === 'indonesia') {
+        title.innerText = 'Мідь — Ланцюги постачання Індонезії';
+        showSubMenu([
+            {
+                label: '🚚 Ланцюги постачання',
+                action: "selectCopperScene('indonesia')"
+            }
+        ]);
+    }
+}
+
+function selectCopperScene(country) {
+    if (country !== 'indonesia') return;
+
+    hideSubMenu();
+    document.getElementById('panel-title').innerText =
+        'Глобальні ланцюги: Мідь → Деталі → Продукція (Індонезія, Японія, США, ФРН, Китай, Корея)';
+    renderFullSupplyChain();
+}
 
 function selectCompany(companyId) {
-            selectedCompanyId = companyId;
-            
-            const subItems = document.querySelectorAll('#subDropdownContent .dropdown-item');
-            subItems.forEach(item => item.classList.remove('active'));
+    selectedCompanyId = companyId;
 
-            const activeBtn = document.getElementById(`sub-${companyId}`);
-            if (activeBtn) activeBtn.classList.add('active');
+    const subItems = document.querySelectorAll('#subDropdownContent .dropdown-item');
+    subItems.forEach(item => item.classList.remove('active'));
 
-            const selectedTextSub = document.getElementById('selectedOptionSub');
-            if (companyId === 'all') {
-                selectedTextSub.innerText = "🏢 Всі компанії";
-            } else {
-                const compObj = (window.countryData.energy?.japan?.japanCompanies || []).find(c => c.id === companyId);
-                selectedTextSub.innerText = compObj ? compObj.name : "🏢 Всі компанії";
-            }
+    const activeBtn = document.getElementById('sub-' + companyId);
+    if (activeBtn) activeBtn.classList.add('active');
 
-            renderJapanPowerPlantsView();
-            document.getElementById('dropdownPanelSub').classList.remove('open');
+    const selectedTextSub = document.getElementById('selectedOptionSub');
+    if (selectedTextSub) {
+        if (companyId === 'all') {
+            selectedTextSub.innerText = '🏢 Всі компанії';
+        } else {
+            const compObj = (window.countryData.energy?.japan?.japanCompanies || [])
+                .find(c => c.id === companyId);
+            selectedTextSub.innerText = compObj ? compObj.name : '🏢 Всі компанії';
         }
+    }
+
+    renderJapanPowerPlantsView();
+    document.getElementById('dropdownPanelSub').classList.remove('open');
+}
