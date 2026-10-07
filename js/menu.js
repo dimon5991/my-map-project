@@ -67,31 +67,13 @@ function selectOption(type) {
         setMainSelection('🏗️ Будівництво');
         itemConstruction.classList.add('active');
         title.innerText = 'Будівництво';
-        showSubMenu([
-            {
-                label: '🇺🇸 США',
-                action: "selectConstructionCountry('usa')"
-            },
-            {
-                label: '🇨🇦 Канада',
-                action: "selectConstructionCountry('canada')"
-            },
-            {
-                label: '🇮🇳 Індія',
-                action: "selectConstructionCountry('india')"
-            }
-        ]);
+        showContinentMenu('construction');
 
     } else if (type === 'energy') {
         setMainSelection('⚡ Енергетика');
         itemEnergy.classList.add('active');
         title.innerText = 'Енергетика';
-        showSubMenu([
-            {
-                label: '🇯🇵 Японія',
-                action: "selectEnergyCountry('japan')"
-            }
-        ]);
+        showContinentMenu('energy');
 
     } else if (type === 'minerals') {
         setMainSelection('⛏️ Мінерали');
@@ -182,87 +164,124 @@ function selectRobotCompany(companyId) {
     document.getElementById('dropdownPanelSub')?.classList.remove('open');
 }
 
-function selectConstructionCountry(country) {
-    const title = document.getElementById('panel-title');
+const continentCountries = {
+    asia: ['afghanistan','armenia','azerbaijan','bahrain','bangladesh','bhutan','brunei','cambodia','china','georgia','india','indonesia','iran','iraq','israel','japan','jordan','kazakhstan','kuwait','kyrgyzstan','laos','lebanon','malaysia','maldives','mongolia','myanmar','nepal','north_korea','oman','pakistan','palestine','philippines','qatar','saudi_arabia','singapore','south_korea','sri_lanka','syria','taiwan','tajikistan','thailand','timor_leste','turkey','turkmenistan','united_arab_emirates','uzbekistan','vietnam','yemen'],
+    europe: ['albania','andorra','austria','belarus','belgium','bosnia_and_herzegovina','bulgaria','croatia','cyprus','czechia','denmark','estonia','finland','france','greece','germany','hungary','iceland','ireland','italy','kosovo','latvia','liechtenstein','lithuania','luxembourg','malta','moldova','monaco','montenegro','netherlands','north_macedonia','norway','poland','portugal','romania','russia','san_marino','serbia','slovakia','slovenia','spain','sweden','switzerland','ukraine','united_kingdom','vatican_city'],
+    africa: ['algeria','angola','benin','botswana','burkina_faso','burundi','cabo_verde','cameroon','central_african_republic','chad','comoros','congo','cote_d_ivoire','democratic_republic_of_the_congo','djibouti','egypt','equatorial_guinea','eritrea','eswatini','ethiopia','gabon','gambia','ghana','guinea','guinea_bissau','kenya','lesotho','liberia','libya','madagascar','malawi','mali','mauritania','mauritius','morocco','mozambique','namibia','niger','nigeria','rwanda','sao_tome_and_principe','senegal','seychelles','sierra_leone','somalia','south_africa','south_sudan','sudan','tanzania','togo','tunisia','uganda','zambia','zimbabwe'],
+    north_america: ['antigua_and_barbuda','bahamas','barbados','belize','canada','costa_rica','cuba','dominica','dominican_republic','el_salvador','grenada','guatemala','haiti','honduras','jamaica','mexico','nicaragua','panama','saint_kitts_and_nevis','saint_lucia','saint_vincent_and_the_grenadines','trinidad_and_tobago','usa'],
+    south_america: ['argentina','bolivia','brazil','chile','colombia','ecuador','guyana','paraguay','peru','suriname','uruguay','venezuela'],
+    oceania: ['australia','fiji','kiribati','marshall_islands','micronesia','nauru','new_zealand','palau','papua_new_guinea','samoa','solomon_islands','tonga','tuvalu','vanuatu']
+};
 
-    if (country === 'usa') {
-        title.innerText = 'Будівельні компанії та цементні заводи США з логістичними лініями';
-        showSubMenu([
-            {
-                label: '🏗️ Будівельні компанії США & Цемент США',
-                action: "selectConstructionScene('usa')"
-            }
-        ]);
-    } else if (country === 'canada') {
-        title.innerText = 'Будівельні компанії, цементні заводи та логістичні зв\'язки в Канаді';
-        showSubMenu([
-            {
-                label: '🏗️ Будівництво (Канада)',
-                action: "selectConstructionScene('canada')"
-            }
-        ]);
-    } else if (country === 'india') {
-        title.innerText = 'Будівельні компанії Індії, цементні заводи та логістичні лінії постачання';
-        showSubMenu([
-            {
-                label: '🧱 Будівельні компанії Індії та цементні заводи',
-                action: "selectConstructionScene('india')"
-            }
-        ]);
+const continentLabels = {
+    asia: '🌏 Азія',
+    europe: '🌍 Європа',
+    africa: '🌍 Африка',
+    north_america: '🌎 Північна Америка',
+    south_america: '🌎 Південна Америка',
+    oceania: '🌏 Австралія та Океанія'
+};
+
+function formatCountryName(country) {
+    return country.split('_').map(part => part.length <= 3 ? part.toUpperCase() : part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+}
+
+function showContinentMenu(type) {
+    window.currentMenuType = type;
+    showSubMenu(Object.keys(continentCountries).map(continent => ({
+        label: continentLabels[continent],
+        action: "selectContinent('" + type + "','" + continent + "')"
+    })));
+    document.getElementById('panel-title').innerText =
+        type === 'construction' ? 'Будівництво — частина світу' : 'Енергетика — частина світу';
+}
+
+function selectContinent(type, continent) {
+    window.currentMenuType = type;
+    document.getElementById('panel-title').innerText =
+        (type === 'construction' ? 'Будівництво — ' : 'Енергетика — ') + continentLabels[continent].replace(/^\S+\s*/, '');
+    showSubMenu(continentCountries[continent].map(country => ({
+        label: '📍 ' + formatCountryName(country),
+        action: "selectCountryByContinent('" + type + "','" + continent + "','" + country + "')"
+    })));
+}
+
+function loadCountryCategory(continent, country, category, callback) {
+    window.countryData = window.countryData || {};
+    window.countryData[category] = window.countryData[category] || {};
+    if (window.countryData[category][country]) {
+        callback();
+        return;
     }
+
+    const key = continent + '/' + country + '/' + category;
+    window._loadedCountryScripts = window._loadedCountryScripts || {};
+    if (window._loadedCountryScripts[key]) {
+        const wait = setInterval(() => {
+            if (window.countryData[category]?.[country]) {
+                clearInterval(wait);
+                callback();
+            }
+        }, 50);
+        return;
+    }
+
+    window._loadedCountryScripts[key] = true;
+    const script = document.createElement('script');
+    script.src = 'data/continents/' + continent + '/' + country + '/' + category + '.js';
+    script.onload = callback;
+    script.onerror = callback;
+    document.head.appendChild(script);
+}
+
+function selectCountryByContinent(type, continent, country) {
+    hideSubMenu();
+    const title = document.getElementById('panel-title');
+    title.innerText = (type === 'construction' ? 'Будівництво — ' : 'Енергетика — ') + formatCountryName(country);
+
+    loadCountryCategory(continent, country, type, () => {
+        if (type === 'construction') {
+            selectConstructionScene(country);
+        } else {
+            selectEnergyScene(country);
+        }
+    });
+}
+
+function selectConstructionCountry(country) {
+    selectCountryByContinent('construction', country === 'usa' || country === 'canada' ? 'north_america' : 'asia', country);
 }
 
 function selectConstructionScene(country) {
     hideSubMenu();
+    document.getElementById('panel-title').innerText =
+        'Будівництво — ' + formatCountryName(country);
 
     if (country === 'usa') {
-        document.getElementById('panel-title').innerText =
-            'Будівельні компанії та цементні заводи США з логістичними лініями';
         renderConstructionView();
     } else if (country === 'canada') {
-        document.getElementById('panel-title').innerText =
-            'Будівельні компанії, цементні заводи та логістичні зв\'язки в Канаді';
         renderCanadaConstructionWithSupplyChain();
     } else if (country === 'india') {
-        document.getElementById('panel-title').innerText =
-            'Будівельні компанії Індії, цементні заводи та логістичні лінії постачання';
         renderIndiaCementWithLogistics();
+    } else {
+        renderGenericConstructionCountry(country);
     }
 }
 
 function selectEnergyCountry(country) {
-    if (country !== 'japan') return;
-
-    const title = document.getElementById('panel-title');
-    title.innerText = 'Мережі електростанцій енергетичних компаній Японії';
-    showSubMenu([
-        {
-            label: '⚡ Електростанції Японії',
-            action: "selectEnergyScene('japan')"
-        }
-    ]);
+    selectCountryByContinent('energy', 'asia', country);
 }
 
 function selectEnergyScene(country) {
-    if (country !== 'japan') return;
-
     hideSubMenu();
+    document.getElementById('panel-title').innerText =
+        'Енергетика — ' + formatCountryName(country);
 
-    const panel = document.getElementById('dropdownPanelSub');
-    const content = document.getElementById('subDropdownContent');
-
-    // Після вибору Японії зберігаємо існуючий фільтр енергетичних компаній.
-    content.innerHTML =
-        '<button class="dropdown-item active" id="sub-all" onclick="selectCompany(\'all\')">🏢 Всі компанії</button>' +
-        (window.countryData.energy?.japan?.japanCompanies || []).map(comp =>
-            '<button class="dropdown-item" id="sub-' + comp.id + '" onclick="selectCompany(\'' + comp.id + '\')">' +
-            '<span class="company-color-indicator" style="background-color: ' + comp.color + ';"></span>' +
-            comp.name +
-            '</button>'
-        ).join('');
-
-    panel.style.display = 'block';
-    renderJapanPowerPlantsView();
+    if (country === 'japan') {
+        renderJapanPowerPlantsView();
+    } else {
+        renderGenericEnergyCountry(country);
+    }
 }
 
 function selectMineral(type) {
