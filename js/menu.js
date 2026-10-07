@@ -58,8 +58,9 @@ function selectOption(type) {
     if (type === 'robots') {
         setMainSelection('🤖 Робототехніка');
         itemRobots.classList.add('active');
-        title.innerText = 'Ключові локації та ланцюжки постачання Boston Dynamics';
-        renderScene('robots');
+        title.innerText = 'Робототехніка';
+        showRobotCompanies();
+        selectRobotCompany('boston-dynamics');
         map.setView([25, 10], 3);
 
     } else if (type === 'construction') {
@@ -105,6 +106,80 @@ function selectOption(type) {
     }
 
     document.getElementById('dropdownPanelMain').classList.remove('open');
+}
+
+function showRobotCompanies() {
+    const companies = [
+        ['tesla', 'Tesla'],
+        ['figure-ai', 'Figure AI'],
+        ['boston-dynamics', 'Boston Dynamics'],
+        ['agility-robotics', 'Agility Robotics'],
+        ['apptronik', 'Apptronik'],
+        ['sanctuary-ai', 'Sanctuary AI'],
+        ['1x-technologies', '1X Technologies'],
+        ['unitree-robotics', 'Unitree Robotics'],
+        ['ubtech-robotics', 'UBTECH Robotics'],
+        ['agiBot-zhiyuan', 'AgiBot / Zhiyuan Robotics'],
+        ['fourier-intelligence', 'Fourier Intelligence'],
+        ['kepler-exploration', 'Kepler Exploration Robotics'],
+        ['robotera', 'RobotEra'],
+        ['xiaomi-robotics', 'Xiaomi Robotics'],
+        ['xpeng-robotics-iron', 'XPENG Robotics / Iron (Китай)'],
+        ['hanson-robotics', 'Hanson Robotics'],
+        ['rainbow-robotics', 'Rainbow Robotics'],
+        ['neura-robotics', 'NEURA Robotics'],
+        ['pal-robotics', 'PAL Robotics'],
+        ['engineered-arts', 'Engineered Arts']
+    ];
+
+    showSubMenu(companies.map(([id, label]) => ({
+        label: '🤖 ' + label,
+        action: "selectRobotCompany('" + id + "')"
+    })));
+    document.querySelectorAll('#subDropdownContent .dropdown-item').forEach((btn, index) => {
+        btn.id = 'robot-' + companies[index][0];
+    });
+}
+
+function selectRobotCompany(companyId) {
+    const labels = {
+        'tesla': 'Tesla',
+        'figure-ai': 'Figure AI',
+        'boston-dynamics': 'Boston Dynamics',
+        'agility-robotics': 'Agility Robotics',
+        'apptronik': 'Apptronik',
+        'sanctuary-ai': 'Sanctuary AI',
+        '1x-technologies': '1X Technologies',
+        'unitree-robotics': 'Unitree Robotics',
+        'ubtech-robotics': 'UBTECH Robotics',
+        'agiBot-zhiyuan': 'AgiBot / Zhiyuan Robotics',
+        'fourier-intelligence': 'Fourier Intelligence',
+        'kepler-exploration': 'Kepler Exploration Robotics',
+        'robotera': 'RobotEra',
+        'xiaomi-robotics': 'Xiaomi Robotics',
+        'xpeng-robotics-iron': 'XPENG Robotics / Iron (Китай)',
+        'hanson-robotics': 'Hanson Robotics',
+        'rainbow-robotics': 'Rainbow Robotics',
+        'neura-robotics': 'NEURA Robotics',
+        'pal-robotics': 'PAL Robotics',
+        'engineered-arts': 'Engineered Arts'
+    };
+
+    const title = document.getElementById('panel-title');
+    const selectedTextSub = document.getElementById('selectedOptionSub');
+
+    if (title) title.innerText = 'Робототехніка — ' + (labels[companyId] || 'Компанія');
+    if (selectedTextSub) selectedTextSub.innerText = '🤖 ' + (labels[companyId] || 'Компанія');
+
+    document.querySelectorAll('#subDropdownContent .dropdown-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    const activeBtn = document.getElementById('robot-' + companyId);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    selectedRobotCompanyId = companyId;
+    renderRobotCompany(companyId);
+    document.getElementById('dropdownPanelSub')?.classList.remove('open');
 }
 
 function selectConstructionCountry(country) {
