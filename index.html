@@ -660,6 +660,30 @@
         const fullSupplyChains = window.countryData.minerals?.japan?.fullSupplyChains || [];
         const japanCompanies = window.countryData.energy?.japan?.japanCompanies || [];
 
+        let map;
+        let currentMarkers = [];
+        let currentLines = [];
+        let selectedCompanyId = 'all';
+
+        document.addEventListener("DOMContentLoaded", function() {
+            map = L.map('map', {
+                center: [25, 10],
+                zoom: 3,
+                worldCopyJump: true
+            });
+
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 16,
+                attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+            }).addTo(map);
+
+            buildSubDropdownMenu();
+            renderScene('robots');
+
+            setTimeout(() => { map.invalidateSize(); }, 200);
+        });
+
+
         function buildSubDropdownMenu() {
             const subContainer = document.getElementById('subDropdownContent');
             let html = `<button class="dropdown-item active" id="sub-all" onclick="selectCompany('all')">🏢 Всі компанії</button>`;
