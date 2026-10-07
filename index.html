@@ -643,23 +643,6 @@
     <script>
         const WALTHAM_COORDS = [42.3765, -71.2356];
 
-        // External country data
-        const robotLocations = Object.values(window.countryData.robots || {}).flatMap(c => c.robotLocations || []);
-        const constructionLocations = window.countryData.construction?.usa?.constructionLocations || [];
-        const cementLocations = window.countryData.construction?.usa?.cementLocations || [];
-        const cementSupplyRoutes = window.countryData.construction?.usa?.cementSupplyRoutes || [];
-        const canadaConstructionLocations = window.countryData.construction?.canada?.constructionLocations || [];
-        const canadaCementPlants = window.countryData.construction?.canada?.cementLocations || [];
-        const indiaConstructionLocations = window.countryData.construction?.india?.constructionLocations || [];
-        const indiaCementPlants = window.countryData.construction?.india?.cementLocations || [];
-        const chinaWireLocations = window.countryData.minerals?.china?.wireLocations || [];
-        const wireDestinationsLocations = Object.values(window.countryData.minerals || {}).flatMap(c => c.wireDestinationsLocations || []);
-        const plantLocations = Object.values(window.countryData.minerals || {}).flatMap(c => c.plantLocations || []);
-        const componentSuppliers = Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.componentSuppliers || []);
-        const finalFactories = Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.finalFactories || []);
-        const fullSupplyChains = window.countryData.minerals?.japan?.fullSupplyChains || [];
-        const japanCompanies = window.countryData.energy?.japan?.japanCompanies || [];
-
         let map;
         let currentMarkers = [];
         let currentLines = [];
@@ -688,7 +671,7 @@
             const subContainer = document.getElementById('subDropdownContent');
             let html = `<button class="dropdown-item active" id="sub-all" onclick="selectCompany('all')">🏢 Всі компанії</button>`;
             
-            japanCompanies.forEach(comp => {
+            (window.countryData.energy?.japan?.japanCompanies || []).forEach(comp => {
                 html += `
                     <button class="dropdown-item" id="sub-${comp.id}" onclick="selectCompany('${comp.id}')">
                         <span class="company-color-indicator" style="background-color: ${comp.color};"></span>
@@ -835,7 +818,7 @@
             const bounds = [];
 
             const factoryIcon = L.divIcon({ className: 'custom-factory-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
-            chinaWireLocations.forEach(loc => {
+            (window.countryData.minerals?.china?.wireLocations || []).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: factoryIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -849,7 +832,7 @@
             });
 
             const destIcon = L.divIcon({ className: 'custom-destination-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
-            wireDestinationsLocations.forEach(loc => {
+            (Object.values(window.countryData.minerals || {}).flatMap(c => c.wireDestinationsLocations || [])).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: destIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -862,7 +845,7 @@
                 bounds.push(loc.coords);
             });
 
-            drawPairConnections(chinaWireLocations, wireDestinationsLocations);
+            drawPairConnections((window.countryData.minerals?.china?.wireLocations || []), (Object.values(window.countryData.minerals || {}).flatMap(c => c.wireDestinationsLocations || [])));
 
             if (bounds.length > 0) {
                 map.fitBounds(bounds, { padding: [50, 50] });
@@ -874,7 +857,7 @@
             const bounds = [];
 
             const plantIcon = L.divIcon({ className: 'custom-plant-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
-            plantLocations.forEach(loc => {
+            (Object.values(window.countryData.minerals || {}).flatMap(c => c.plantLocations || [])).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: plantIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -888,7 +871,7 @@
             });
 
             const compIcon = L.divIcon({ className: 'custom-component-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
-            componentSuppliers.forEach(loc => {
+            (Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.componentSuppliers || [])).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: compIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -902,7 +885,7 @@
             });
 
             const finalIcon = L.divIcon({ className: 'custom-final-marker', iconSize: [16, 16], iconAnchor: [8, 8] });
-            finalFactories.forEach(loc => {
+            (Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.finalFactories || [])).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: finalIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -915,7 +898,7 @@
                 bounds.push(loc.coords);
             });
 
-            fullSupplyChains.forEach(route => {
+            (window.countryData.minerals?.japan?.fullSupplyChains || []).forEach(route => {
                 const isStage1 = route.stage === 1;
                 const polyline = L.polyline([route.from, route.to], {
                     color: isStage1 ? '#00d2ff' : '#e040fb',
@@ -936,7 +919,7 @@
         function renderConstructionView() {
             clearLayers();
 
-            constructionLocations.forEach(loc => {
+            (window.countryData.construction?.usa?.constructionLocations || []).forEach(loc => {
                 const iconHtml = `
                     <div class="custom-marker-wrapper">
                         <div class="marker-dot dot-construction"></div>
@@ -955,7 +938,7 @@
                 currentMarkers.push(marker);
             });
 
-            cementLocations.forEach(loc => {
+            (window.countryData.construction?.usa?.cementLocations || []).forEach(loc => {
                 const iconHtml = `
                     <div class="custom-marker-wrapper">
                         <div class="marker-dot dot-cement"></div>
@@ -979,7 +962,7 @@
                 currentMarkers.push(marker);
             });
 
-            cementSupplyRoutes.forEach(route => {
+            (window.countryData.construction?.usa?.cementSupplyRoutes || []).forEach(route => {
                 const polyline = L.polyline([route.from, route.to], {
                     color: '#a855f7',
                     weight: 2,
@@ -1010,7 +993,7 @@
             });
 
             // 1. Нанесення будівельних хабів
-            canadaConstructionLocations.forEach(loc => {
+            (window.countryData.construction?.canada?.constructionLocations || []).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: constrIcon }).addTo(map);
                 marker.bindPopup(`
                     <div style="padding: 12px;">
@@ -1023,7 +1006,7 @@
             });
 
             // 2. Нанесення цементних заводів та прокладання логістичних ліній
-            canadaCementPlants.forEach(plant => {
+            (window.countryData.construction?.canada?.cementLocations || []).forEach(plant => {
                 const plantMarker = L.marker(plant.coords, { icon: cementIcon }).addTo(map);
                 plantMarker.bindPopup(`
                     <div style="padding: 12px;">
@@ -1038,7 +1021,7 @@
                 let closestHub = null;
                 let minDistance = Infinity;
 
-                canadaConstructionLocations.forEach(hub => {
+                (window.countryData.construction?.canada?.constructionLocations || []).forEach(hub => {
                     const dist = Math.hypot(
                         hub.coords[0] - plant.coords[0],
                         hub.coords[1] - plant.coords[1]
@@ -1077,7 +1060,7 @@
                 iconAnchor: [8, 8]
             });
 
-            indiaConstructionLocations.forEach(loc => {
+            (window.countryData.construction?.india?.constructionLocations || []).forEach(loc => {
                 const marker = L.marker(loc.coords, { icon: constrIcon }).addTo(map);
                 const popupContent = `
                     <div style="padding: 12px;">
@@ -1096,7 +1079,7 @@
                 iconAnchor: [8, 8]
             });
 
-            indiaCementPlants.forEach(plant => {
+            (window.countryData.construction?.india?.cementLocations || []).forEach(plant => {
                 const marker = L.marker(plant.coords, { icon: cementIcon }).addTo(map);
                 const popupContent = `
                     <div style="padding: 12px;">
@@ -1129,8 +1112,8 @@
             clearLayers();
 
             const targetCompanies = selectedCompanyId === 'all' 
-                ? japanCompanies 
-                : japanCompanies.filter(c => c.id === selectedCompanyId);
+                ? (window.countryData.energy?.japan?.japanCompanies || []) 
+                : (window.countryData.energy?.japan?.japanCompanies || []).filter(c => c.id === selectedCompanyId);
 
             if (selectedCompanyId !== 'all' && targetCompanies.length > 0 && targetCompanies[0].plants.length > 0) {
                 map.flyTo(targetCompanies[0].plants[0].coords, 7);
@@ -1199,7 +1182,7 @@
             clearLayers();
 
             const isRobot = (type === 'robots');
-            const data = robotLocations;
+            const data = (Object.values(window.countryData.robots || {}).flatMap(c => c.robotLocations || []));
 
             data.forEach(loc => {
                 if (!loc.isHub) {
@@ -1317,7 +1300,7 @@
             if (companyId === 'all') {
                 selectedTextSub.innerText = "🏢 Всі компанії";
             } else {
-                const compObj = japanCompanies.find(c => c.id === companyId);
+                const compObj = (window.countryData.energy?.japan?.japanCompanies || []).find(c => c.id === companyId);
                 selectedTextSub.innerText = compObj ? compObj.name : "🏢 Всі компанії";
             }
 
