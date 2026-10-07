@@ -12,6 +12,7 @@ window.countryData.minerals.china = {
     { coords: [32.06025, 118.79687], title: "Нанкін (Цзянсу)", text: "<b>Jiangsu Jinling Special Cable:</b> Спеціальні мідні кабелі для енергетики, телекомунікацій та транспорту." }
   ],
   wireDestinationsLocations: [
+    { coords: [34.5222, 113.8864], title: "Чженчжоу (Китай)", text: "<b>Foxconn (Збирання iPhone):</b> Гігантське споживання мікрокабелів, емальованого дроту та конекторів для електроніки." },
     { coords: [30.8741, 121.7709], title: "Шанхай (Китай)", text: "<b>Tesla Giga Shanghai:</b> Масове використання високовольтних кабелів та мідних обмоток для електродвигунів." }
   ],
   plantLocations: [

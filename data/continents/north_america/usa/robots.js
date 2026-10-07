@@ -4,6 +4,22 @@ window.countryData.robots = window.countryData.robots || {};
 window.countryData.robots.usa = {
   robotLocations: [
     {
+                    coords: [42.3765, -71.2356],
+                    isHub: true,
+                    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80",
+                    badge: "Головна штаб-квартира & База R&D",
+                    title: "Волтгем (Массачусетс, США)",
+                    company: "Boston Dynamics HQ (200 Smith St)",
+                    role: "Головна база та лабораторія: розробка ШІ, випробування і збирання",
+                    text: "<ul><li><b>Штаб-квартира & Лабораторії:</b> площа понад 16 000 м² з полігонами перешкод.</li><li><b>Моделі керування:</b> розробка алгоритмів балансування для Atlas.</li><li><b>Фінальна інтеграція:</b> збирання роботів з вузлів, що надходять з Кореї, Японії, Швейцарії та Тайваню.</li></ul>",
+                    specs: [
+                        { k: "Локація", v: "200 Smith Street" },
+                        { k: "Статус", v: "Головний Хаб" },
+                        { k: "Продукція", v: "Electric Atlas & Spot" },
+                        { k: "Складання", v: "Повний цикл у США" }
+                    ]
+                },
+    {
                     coords: [37.3541, -121.9552],
                     image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=600&q=80",
                     badge: "Обчислювальні чіпи",
