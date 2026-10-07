@@ -657,7 +657,7 @@
         const plantLocations = Object.values(window.countryData.minerals || {}).flatMap(c => c.plantLocations || []);
         const componentSuppliers = Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.componentSuppliers || []);
         const finalFactories = Object.values(window.countryData.automotive_industry || {}).flatMap(c => c.finalFactories || []);
-        const fullSupplyChains = [];
+        const fullSupplyChains = window.countryData.minerals?.japan?.fullSupplyChains || [];
         const japanCompanies = window.countryData.energy?.japan?.japanCompanies || [];
 
         function buildSubDropdownMenu() {
