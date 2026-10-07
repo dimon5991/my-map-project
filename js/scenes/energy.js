@@ -67,3 +67,27 @@ function renderJapanPowerPlantsView() {
                 });
             });
         }
+
+
+function renderGenericEnergyCountry(country) {
+    clearLayers();
+    const companies = window.countryData.energy?.[country]?.japanCompanies || [];
+    const data = companies.flatMap(company => (company.plants || []).map(plant => ({
+        ...plant,
+        company: company.name,
+        color: company.color
+    })));
+
+    data.forEach(plant => {
+        const icon = L.divIcon({
+            html: '<div style="width:18px;height:18px;border-radius:50%;background:' + (plant.color || '#3388ff') + ';border:3px solid white;"></div>',
+            className: '',
+            iconSize:[24,24],
+            iconAnchor:[12,12]
+        });
+        const marker = L.marker(plant.coords, {icon}).addTo(map);
+        marker.bindPopup('<b>' + plant.name + '</b><br>' + (plant.company || '') + '<br>' + (plant.type || '') + '<br>' + (plant.role || '') + '<br>Потужність: ' + (plant.cap || '—'));
+        currentMarkers.push(marker);
+    });
+    if (data.length) map.fitBounds(L.latLngBounds(data.map(x => x.coords)), {padding:[40,40]});
+}
