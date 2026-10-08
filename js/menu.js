@@ -58,7 +58,7 @@ function selectOption(type) {
     if (type === 'robots') {
         setMainSelection('🤖 Робототехніка');
         itemRobots.classList.add('active');
-        title.innerText = 'Робототехніка';
+        if (title) title.innerText = 'Робототехніка';
         showRobotCompanies();
         selectRobotCompany('boston-dynamics');
         document.getElementById('dropdownPanelSub')?.classList.add('open');
@@ -67,19 +67,19 @@ function selectOption(type) {
     } else if (type === 'construction') {
         setMainSelection('🏗️ Будівництво');
         itemConstruction.classList.add('active');
-        title.innerText = 'Будівництво';
+        if (title) title.innerText = 'Будівництво';
         showContinentMenu('construction');
 
     } else if (type === 'energy') {
         setMainSelection('⚡ Енергетика');
         itemEnergy.classList.add('active');
-        title.innerText = 'Енергетика';
+        if (title) title.innerText = 'Енергетика';
         showContinentMenu('energy');
 
     } else if (type === 'minerals') {
         setMainSelection('⛏️ Мінерали');
         itemMinerals.classList.add('active');
-        title.innerText = 'Мінерали';
+        if (title) title.innerText = 'Мінерали';
         showSubMenu([
             {
                 label: '🔶 Мідь',
@@ -193,13 +193,15 @@ function showContinentMenu(type) {
         label: continentLabels[continent],
         action: "selectContinent('" + type + "','" + continent + "')"
     })));
-    document.getElementById('panel-title').innerText =
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText =
         type === 'construction' ? 'Будівництво — частина світу' : 'Енергетика — частина світу';
 }
 
 function selectContinent(type, continent) {
     window.currentMenuType = type;
-    document.getElementById('panel-title').innerText =
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText =
         (type === 'construction' ? 'Будівництво — ' : 'Енергетика — ') + continentLabels[continent].replace(/^\S+\s*/, '');
     showSubMenu(continentCountries[continent].map(country => ({
         label: '📍 ' + formatCountryName(country),
@@ -255,7 +257,8 @@ function selectConstructionCountry(country) {
 
 function selectConstructionScene(country) {
     hideSubMenu();
-    document.getElementById('panel-title').innerText =
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText =
         'Будівництво — ' + formatCountryName(country);
 
     if (country === 'usa') {
@@ -275,7 +278,8 @@ function selectEnergyCountry(country) {
 
 function selectEnergyScene(country) {
     hideSubMenu();
-    document.getElementById('panel-title').innerText =
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText =
         'Енергетика — ' + formatCountryName(country);
 
     if (country === 'japan') {
@@ -288,7 +292,8 @@ function selectEnergyScene(country) {
 function selectMineral(type) {
     if (type !== 'copper') return;
 
-    document.getElementById('panel-title').innerText = 'Мідь';
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText = 'Мідь';
     showSubMenu([
         {
             label: '🇯🇵 Японія',
@@ -305,11 +310,11 @@ function selectCopperCountry(country) {
     const title = document.getElementById('panel-title');
 
     if (country === 'japan') {
-        title.innerText = 'Мідь — Японія';
+        if (title) title.innerText = 'Мідь — Японія';
         hideSubMenu();
         renderScene('minerals');
     } else if (country === 'indonesia') {
-        title.innerText = 'Мідь — Ланцюги постачання Індонезії';
+        if (title) title.innerText = 'Мідь — Ланцюги постачання Індонезії';
         showSubMenu([
             {
                 label: '🚚 Ланцюги постачання',
@@ -323,7 +328,8 @@ function selectCopperScene(country) {
     if (country !== 'indonesia') return;
 
     hideSubMenu();
-    document.getElementById('panel-title').innerText =
+    const panelTitle = document.getElementById('panel-title');
+    if (panelTitle) panelTitle.innerText =
         'Глобальні ланцюги: Мідь → Деталі → Продукція (Індонезія, Японія, США, ФРН, Китай, Корея)';
     renderFullSupplyChain();
 }
