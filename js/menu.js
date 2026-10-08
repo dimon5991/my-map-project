@@ -26,7 +26,7 @@ function showSubMenu(items) {
     ).join('');
 
     panel.style.display = 'block';
-    panel.classList.remove('open');
+    panel.classList.add('open');
 }
 
 function hideSubMenu() {
@@ -240,7 +240,7 @@ function loadCountryCategory(continent, country, category, callback) {
 function selectCountryByContinent(type, continent, country) {
     hideSubMenu();
     const title = document.getElementById('panel-title');
-    title.innerText = (type === 'construction' ? 'Будівництво — ' : 'Енергетика — ') + formatCountryName(country);
+    if (title) title.innerText = (type === 'construction' ? 'Будівництво — ' : 'Енергетика — ') + formatCountryName(country);
 
     loadCountryCategory(continent, country, type, () => {
         if (type === 'construction') {
