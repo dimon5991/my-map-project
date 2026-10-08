@@ -61,6 +61,7 @@ function selectOption(type) {
         title.innerText = 'Робототехніка';
         showRobotCompanies();
         selectRobotCompany('boston-dynamics');
+        document.getElementById('dropdownPanelSub')?.classList.add('open');
         map.setView([25, 10], 3);
 
     } else if (type === 'construction') {
