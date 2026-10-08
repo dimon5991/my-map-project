@@ -276,15 +276,82 @@ function selectEnergyCountry(country) {
     selectCountryByContinent('energy', 'asia', country);
 }
 
+function showEnergyCountryMenu(country) {
+    const countryName = formatCountryName(country);
+    showSubMenu([
+        {
+            label: '🇯🇵 ' + countryName,
+            action: "selectEnergyScene('" + country + "')"
+        },
+        {
+            label: '🏢 Вибір компанії',
+            action: "showEnergyCompanies('" + country + "')"
+        }
+    ]);
+    const selectedTextSub = document.getElementById('selectedOptionSub');
+    if (selectedTextSub) selectedTextSub.innerText = '⚡ ' + countryName;
+}
+
+function showEnergyCompanies(country) {
+    if (country !== 'japan') return;
+
+    const companies = window.countryData.energy?.japan?.japanCompanies || [];
+    showSubMenu([
+        {
+            label: '🇯🇵 Японія',
+            action: "showEnergyCountryMenu('japan')"
+        },
+        {
+            label: '🏢 Всі компанії',
+            action: "selectEnergyCompany('all')"
+        },
+        ...companies.map(company => ({
+            label: '🏢 ' + company.name,
+            action: "selectEnergyCompany('" + company.id + "')"
+        }))
+    ]);
+}
+
+function selectEnergyCompany(companyId) {
+    selectedCompanyId = companyId;
+
+    const companies = window.countryData.energy?.japan?.japanCompanies || [];
+    const selectedCompany = companies.find(company => company.id === companyId);
+    const selectedTextSub = document.getElementById('selectedOptionSub');
+
+    if (selectedTextSub) {
+        selectedTextSub.innerText = companyId === 'all'
+            ? '⚡ Японія — всі компанії'
+            : '⚡ Японія — ' + (selectedCompany?.name || 'Компанія');
+    }
+
+    renderJapanPowerPlantsView();
+
+    showSubMenu([
+        {
+            label: '🇯🇵 Японія',
+            action: "showEnergyCountryMenu('japan')"
+        },
+        {
+            label: companyId === 'all'
+                ? '🏢 Всі компанії'
+                : '🏢 ' + (selectedCompany?.name || 'Компанія'),
+            action: "showEnergyCompanies('japan')"
+        }
+    ]);
+}
+
 function selectEnergyScene(country) {
-    hideSubMenu();
     const panelTitle = document.getElementById('panel-title');
     if (panelTitle) panelTitle.innerText =
         'Енергетика — ' + formatCountryName(country);
 
     if (country === 'japan') {
+        selectedCompanyId = 'all';
         renderJapanPowerPlantsView();
+        showEnergyCountryMenu('japan');
     } else {
+        hideSubMenu();
         renderGenericEnergyCountry(country);
     }
 }
