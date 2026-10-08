@@ -60,7 +60,9 @@ function selectOption(type) {
         itemRobots.classList.add('active');
         if (title) title.innerText = 'Робототехніка';
         showRobotCompanies();
-        selectRobotCompany('boston-dynamics');
+        if (typeof renderScene === 'function') renderScene('robots');
+        const selectedSub = document.getElementById('selectedOptionSub');
+        if (selectedSub) selectedSub.innerText = '🤖 Всі компанії';
         document.getElementById('dropdownPanelSub')?.classList.add('open');
         map.setView([25, 10], 3);
 
