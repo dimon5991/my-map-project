@@ -133,3 +133,109 @@ html, body, .map-page {
   outline: 3px solid #f0b429;
   outline-offset: 2px;
 }
+
+.place-search-panel {
+  width: min(340px, calc(100vw - 80px));
+  margin: 10px 0 0 10px;
+  padding: 12px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 97%);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 18%);
+  color: #17212b;
+}
+
+.place-search-heading {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 14px;
+}
+
+.place-search-form {
+  display: flex;
+  gap: 6px;
+}
+
+.place-search-input {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #fff;
+  color: #17212b;
+  font: inherit;
+  font-size: 13px;
+}
+
+.place-search-input:focus {
+  border-color: #1769aa;
+  outline: 2px solid rgb(23 105 170 / 18%);
+}
+
+.place-search-submit {
+  flex: 0 0 auto;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7px;
+  background: #1769aa;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.place-search-submit:disabled { opacity: .6; cursor: wait; }
+
+.place-search-status {
+  margin-top: 8px;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.place-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 220px;
+  margin-top: 7px;
+  overflow-y: auto;
+}
+
+.place-search-result {
+  padding: 8px 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #17212b;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  cursor: pointer;
+}
+
+.place-search-result:hover { background: #e8f1fa; }
+
+.marker-delete-button {
+  display: block;
+  margin-top: 7px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: #fff0f0;
+  color: #b42318;
+  font: inherit;
+  cursor: pointer;
+}
+
+.marker-delete-button:hover { background: #ffdddd; }
+
+@media (max-width: 520px) {
+  .place-search-panel { width: min(310px, calc(100vw - 70px)); }
+  .place-search-input { font-size: 12px; }
+  .place-search-submit { padding: 0 9px; }
+}
