@@ -90,3 +90,46 @@ html, body, .map-page {
   .map-title { top: 12px; }
   .map-mode-button { min-height: 36px; padding: 7px 9px; font-size: 13px; }
 }
+
+.map-marker-hint {
+  max-width: min(280px, 70vw);
+  margin: 10px 0 0 10px;
+  padding: 9px 12px;
+  border: 1px solid rgb(0 0 0 / 12%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 1px 5px rgb(0 0 0 / 18%);
+  color: #24313c;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.marker-coordinates {
+  min-width: 190px;
+  color: #17212b;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.marker-coordinates strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.marker-copy-button {
+  margin-top: 8px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: #1769aa;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.marker-copy-button:hover { background: #12558b; }
+
+.marker-copy-button:focus-visible {
+  outline: 3px solid #f0b429;
+  outline-offset: 2px;
+}
