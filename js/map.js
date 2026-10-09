@@ -248,6 +248,16 @@
     options: { position: "topleft" },
     onAdd: function () {
       const panel = L.DomUtil.create("div", "place-search-panel");
+      const toggleButton = L.DomUtil.create("button", "place-search-toggle", panel);
+      toggleButton.type = "button";
+      toggleButton.textContent = "Згорнути пошук";
+      toggleButton.setAttribute("aria-expanded", "true");
+      toggleButton.setAttribute("aria-label", "Згорнути або розгорнути вікно пошуку");
+      toggleButton.addEventListener("click", () => {
+        const collapsed = panel.classList.toggle("is-collapsed");
+        toggleButton.textContent = collapsed ? "Пошук" : "Згорнути пошук";
+        toggleButton.setAttribute("aria-expanded", String(!collapsed));
+      });
       const heading = L.DomUtil.create("strong", "place-search-heading", panel);
       heading.textContent = "Пошук на карті";
 
