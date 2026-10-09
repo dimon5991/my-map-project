@@ -311,3 +311,52 @@ html, body, .map-page {
 .coordinate-search-form .place-search-submit {
   margin-top: 10px;
 }
+
+
+/* Картка об'єкта мідної галузі */
+.mine-card {
+  min-width: 245px;
+  max-width: 320px;
+  color: #17212b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mine-card-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+.mine-card-subtitle {
+  margin: 4px 0 12px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.mine-card-fields {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.mine-card-row {
+  display: grid;
+  grid-template-columns: minmax(88px, 0.8fr) minmax(120px, 1.2fr);
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.mine-card-row dt {
+  margin: 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.mine-card-row dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
