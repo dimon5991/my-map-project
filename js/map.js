@@ -445,17 +445,7 @@
   });
   map.addControl(new ModeControl());
 
-  const HintControl = L.Control.extend({
-    options: { position: "topleft" },
-    onAdd: function () {
-      const container = L.DomUtil.create("div", "map-marker-hint");
-      container.textContent = "Увімкни інструмент «Мітки», щоб додавати власні мітки. Коли він вимкнений, випадкові кліки не створюють міток.";
-      L.DomEvent.disableClickPropagation(container);
-      L.DomEvent.disableScrollPropagation(container);
-      return container;
-    }
-  });
-  map.addControl(new HintControl());
+
 
   window.requestAnimationFrame(() => map.invalidateSize());
 })();
