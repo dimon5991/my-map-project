@@ -43,8 +43,8 @@
     };
   }
 
-  function coordinatesPopup(latlng) {
-    const coordinates = formatCoordinates(latlng);
+  function coordinatesPopup(marker) {
+    const coordinates = formatCoordinates(marker.getLatLng());
     const wrapper = document.createElement("div");
     wrapper.className = "marker-coordinates";
 
@@ -78,15 +78,25 @@
     });
     wrapper.appendChild(copyButton);
 
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "marker-delete-button";
+    deleteButton.textContent = "Видалити мітку";
+    deleteButton.addEventListener("click", () => {
+      map.closePopup();
+      map.removeLayer(marker);
+    });
+    wrapper.appendChild(deleteButton);
+
     return wrapper;
   }
 
   map.on("click", (event) => {
     const marker = L.marker(event.latlng, { draggable: true }).addTo(map);
-    marker.bindPopup(coordinatesPopup(marker.getLatLng())).openPopup();
+    marker.bindPopup(coordinatesPopup(marker)).openPopup();
 
     marker.on("dragend", () => {
-      marker.setPopupContent(coordinatesPopup(marker.getLatLng()));
+      marker.setPopupContent(coordinatesPopup(marker));
       marker.openPopup();
     });
   });
