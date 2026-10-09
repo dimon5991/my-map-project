@@ -1,5 +1,5 @@
-function initGoogleMap() {
-    map = createGoogleMapAdapter('map', {
+function initLeafletMap() {
+    map = createLeafletMap('map', {
         center: [25, 10],
         zoom: 3
     });
@@ -7,7 +7,5 @@ function initGoogleMap() {
     buildSubDropdownMenu();
     renderScene('robots');
 
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 200);
+    requestAnimationFrame(() => map.invalidateSize());
 }
