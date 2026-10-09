@@ -164,7 +164,35 @@
     mineMarkers.push({ data: mine, marker });
   });
 
-  map.on("click", (event) => addMarker(event.latlng, true).openPopup());
+  let markerToolEnabled = false;
+
+  const MarkerToolControl = L.Control.extend({
+    options: { position: "bottomleft" },
+    onAdd: function () {
+      const container = L.DomUtil.create("div", "marker-tool-control");
+      const button = L.DomUtil.create("button", "marker-tool-button", container);
+      button.type = "button";
+      button.textContent = "Увімкнути мітки";
+      button.setAttribute("aria-pressed", "false");
+      button.setAttribute("aria-label", "Увімкнути або вимкнути інструмент додавання міток");
+      button.addEventListener("click", () => {
+        markerToolEnabled = !markerToolEnabled;
+        button.textContent = markerToolEnabled ? "Вимкнути мітки" : "Увімкнути мітки";
+        button.setAttribute("aria-pressed", String(markerToolEnabled));
+        container.classList.toggle("is-active", markerToolEnabled);
+        mapElement.classList.toggle("marker-tool-active", markerToolEnabled);
+      });
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.disableScrollPropagation(container);
+      return container;
+    }
+  });
+  map.addControl(new MarkerToolControl());
+
+  map.on("click", (event) => {
+    if (!markerToolEnabled) return;
+    addMarker(event.latlng, true).openPopup();
+  });
   readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false));
 
   // Search by country, region and mine name; all fields are optional.
@@ -421,7 +449,7 @@
     options: { position: "topleft" },
     onAdd: function () {
       const container = L.DomUtil.create("div", "map-marker-hint");
-      container.textContent = "Клікни на карту, щоб додати мітку. Мітки зберігаються в цьому браузері.";
+      container.textContent = "Увімкни інструмент «Мітки», щоб додавати власні мітки. Коли він вимкнений, випадкові кліки не створюють міток.";
       L.DomEvent.disableClickPropagation(container);
       L.DomEvent.disableScrollPropagation(container);
       return container;
