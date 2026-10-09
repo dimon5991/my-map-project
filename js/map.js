@@ -190,9 +190,21 @@
     onAdd: function () {
       const panel = L.DomUtil.create("div", "place-search-panel");
       const heading = L.DomUtil.create("strong", "place-search-heading", panel);
-      heading.textContent = "Пошук шахти";
+      heading.textContent = "Пошук на карті";
 
-      const form = L.DomUtil.create("form", "place-search-form", panel);
+      const modeSwitch = L.DomUtil.create("div", "place-search-modes", panel);
+      modeSwitch.setAttribute("role", "group");
+      modeSwitch.setAttribute("aria-label", "Спосіб пошуку");
+      const nameModeButton = L.DomUtil.create("button", "place-search-mode is-active", modeSwitch);
+      nameModeButton.type = "button";
+      nameModeButton.textContent = "Країна / шахта";
+      nameModeButton.setAttribute("aria-pressed", "true");
+      const coordinateModeButton = L.DomUtil.create("button", "place-search-mode", modeSwitch);
+      coordinateModeButton.type = "button";
+      coordinateModeButton.textContent = "Координати";
+      coordinateModeButton.setAttribute("aria-pressed", "false");
+
+      const nameForm = L.DomUtil.create("form", "place-search-form", panel);
       const fields = [
         { key: "country", label: "Країна", placeholder: "Наприклад, Chile" },
         { key: "region", label: "Регіон / область", placeholder: "Наприклад, Antofagasta" },
@@ -201,7 +213,7 @@
       const inputs = {};
 
       fields.forEach((field) => {
-        const label = L.DomUtil.create("label", "place-search-field", form);
+        const label = L.DomUtil.create("label", "place-search-field", nameForm);
         label.textContent = field.label;
         const input = L.DomUtil.create("input", "place-search-input", label);
         input.type = "text";
@@ -212,25 +224,87 @@
         inputs[field.key] = input;
       });
 
-      const button = L.DomUtil.create("button", "place-search-submit", form);
-      button.type = "submit";
-      button.textContent = "Знайти шахту";
+      const nameButton = L.DomUtil.create("button", "place-search-submit", nameForm);
+      nameButton.type = "submit";
+      nameButton.textContent = "Знайти шахту";
+
+      const coordinateForm = L.DomUtil.create("form", "place-search-form coordinate-search-form", panel);
+      coordinateForm.hidden = true;
+      const latitudeLabel = L.DomUtil.create("label", "place-search-field", coordinateForm);
+      latitudeLabel.textContent = "Широта (latitude)";
+      const latitudeInput = L.DomUtil.create("input", "place-search-input", latitudeLabel);
+      latitudeInput.type = "number";
+      latitudeInput.min = "-90";
+      latitudeInput.max = "90";
+      latitudeInput.step = "any";
+      latitudeInput.placeholder = "Наприклад, -22.454";
+      latitudeInput.setAttribute("aria-label", "Широта");
+      latitudeInput.required = true;
+
+      const longitudeLabel = L.DomUtil.create("label", "place-search-field", coordinateForm);
+      longitudeLabel.textContent = "Довгота (longitude)";
+      const longitudeInput = L.DomUtil.create("input", "place-search-input", longitudeLabel);
+      longitudeInput.type = "number";
+      longitudeInput.min = "-180";
+      longitudeInput.max = "180";
+      longitudeInput.step = "any";
+      longitudeInput.placeholder = "Наприклад, -68.929";
+      longitudeInput.setAttribute("aria-label", "Довгота");
+      longitudeInput.required = true;
+
+      const coordinateButton = L.DomUtil.create("button", "place-search-submit", coordinateForm);
+      coordinateButton.type = "submit";
+      coordinateButton.textContent = "Перейти до координат";
 
       const status = L.DomUtil.create("div", "place-search-status", panel);
       status.setAttribute("role", "status");
-      status.textContent = "Заповни один або кілька полів. Приклад: Chile / Antofagasta / Escondida.";
+      status.textContent = "Заповни країну, регіон або назву шахти.";
 
       const results = L.DomUtil.create("div", "place-search-results", panel);
       results.id = "place-search-results";
 
-      form.addEventListener("submit", (event) => {
+      function setSearchMode(mode) {
+        const byCoordinates = mode === "coordinates";
+        nameForm.hidden = byCoordinates;
+        coordinateForm.hidden = !byCoordinates;
+        nameModeButton.classList.toggle("is-active", !byCoordinates);
+        coordinateModeButton.classList.toggle("is-active", byCoordinates);
+        nameModeButton.setAttribute("aria-pressed", String(!byCoordinates));
+        coordinateModeButton.setAttribute("aria-pressed", String(byCoordinates));
+        results.replaceChildren();
+        status.textContent = byCoordinates
+          ? "Введи широту й довготу в десятковому форматі."
+          : "Заповни країну, регіон або назву шахти.";
+      }
+
+      nameModeButton.addEventListener("click", () => setSearchMode("name"));
+      coordinateModeButton.addEventListener("click", () => setSearchMode("coordinates"));
+
+      nameForm.addEventListener("submit", (event) => {
         event.preventDefault();
         searchPlace({
           country: inputs.country.value,
           region: inputs.region.value,
           mine: inputs.mine.value
-        }, status, form);
+        }, status, nameForm);
       });
+
+      coordinateForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const lat = Number(latitudeInput.value);
+        const lng = Number(longitudeInput.value);
+        if (!latitudeInput.value.trim() || !longitudeInput.value.trim() ||
+            !Number.isFinite(lat) || !Number.isFinite(lng) ||
+            lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+          status.textContent = "Перевір координати: широта від −90 до 90, довгота від −180 до 180.";
+          return;
+        }
+
+        map.setView([lat, lng], 12);
+        addMarker([lat, lng], true, "Мітка за координатами").openPopup();
+        status.textContent = "Перейшов до координат: " + lat.toFixed(6) + ", " + lng.toFixed(6);
+      });
+
       L.DomEvent.disableClickPropagation(panel);
       L.DomEvent.disableScrollPropagation(panel);
       return panel;
