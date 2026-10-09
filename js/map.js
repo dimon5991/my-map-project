@@ -105,6 +105,65 @@
     return marker;
   }
 
+
+  // Copper mine records loaded from country data files.
+  function createMinePopup(mine) {
+    const card = document.createElement("section");
+    card.className = "mine-card";
+
+    const title = document.createElement("h3");
+    title.className = "mine-card-title";
+    title.textContent = mine.name;
+    card.appendChild(title);
+
+    const subtitle = document.createElement("div");
+    subtitle.className = "mine-card-subtitle";
+    subtitle.textContent = [mine.region, mine.country].filter(Boolean).join(", ");
+    card.appendChild(subtitle);
+
+    const fields = [
+      ["Власник", mine.owner],
+      ["Поточний стан", mine.status],
+      ["Процес", mine.process],
+      ["Тип родовища", mine.depositType],
+      ["Тип руди", mine.oreType],
+      ["Інші метали", Array.isArray(mine.otherMetals) ? mine.otherMetals.join(", ") : mine.otherMetals],
+      ["Координати", Number(mine.coordinates.latitude).toFixed(6) + " " + Number(mine.coordinates.longitude).toFixed(6)]
+    ];
+
+    const table = document.createElement("dl");
+    table.className = "mine-card-fields";
+    fields.forEach(([label, value]) => {
+      if (value === undefined || value === null || value === "") return;
+      const row = document.createElement("div");
+      row.className = "mine-card-row";
+      const term = document.createElement("dt");
+      term.textContent = label;
+      const detail = document.createElement("dd");
+      detail.textContent = String(value);
+      row.append(term, detail);
+      table.appendChild(row);
+    });
+    card.appendChild(table);
+    return card;
+  }
+
+  const mineMarkers = [];
+  (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).forEach((mine) => {
+    if (!mine || !mine.coordinates) return;
+    const lat = Number(mine.coordinates.latitude);
+    const lng = Number(mine.coordinates.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
+
+    const marker = L.marker([lat, lng], {
+      title: mine.name || "Мідна шахта",
+      alt: mine.name || "Мідна шахта"
+    }).addTo(map);
+    marker.bindPopup(createMinePopup(mine), { maxWidth: 340, minWidth: 260 });
+    mineMarkers.push({ data: mine, marker });
+  });
+
   map.on("click", (event) => addMarker(event.latlng, true).openPopup());
   readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false));
 
