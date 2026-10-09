@@ -1,28 +1,26 @@
 /**
- * Copper mine data for Chile.
- *
- * Add mine records to the "mines" array.
- * Geometry uses GeoJSON-style coordinates: [longitude, latitude].
- * Keep this file data-only; map behavior belongs in js/.
- *
- * Example record:
- * {
- *   id: "escondida",
- *   name: "Escondida",
- *   country: "Chile",
- *   region: "Antofagasta",
- *   mineType: "OP", // OP = open pit; UG = underground
- *   process: ["concentrator"], // e.g. "concentrator", "SX-EW"
- *   status: "operating",
- *   operator: "",
- *   owners: [],
- *   geometry: {
- *     type: "Polygon",
- *     coordinates: [[]]
- *   },
- *   sources: [],
- *   notes: ""
- * }
+ * Дані мідних шахт Чилі.
+ * Координати: [широта, довгота] для точкових об'єктів.
+ * Геометрія контуру можна додати пізніше, коли буде інструмент малювання.
  */
-
-export const mines = [];
+window.COPPER_MINES = [
+  {
+    id: "escondida",
+    name: "Escondida",
+    country: "Чилі",
+    region: "Antofagasta",
+    owner: "BHP (57.5%), Rio Tinto Corp. (30%), Japan Escondida (12.5%)",
+    status: "Видобуток",
+    process: "Концентрати та SX-EW",
+    depositType: "Відкрите",
+    oreType: "порфірова",
+    otherMetals: ["Au", "Ag"],
+    coordinates: {
+      latitude: -24.270376,
+      longitude: -69.074306
+    },
+    geometry: null,
+    sources: [],
+    notes: ""
+  }
+];
