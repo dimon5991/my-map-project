@@ -402,3 +402,40 @@ html, body, .map-page {
   min-width: 90px;
   text-align: center;
 }
+
+
+/* Інструмент додавання власних міток */
+.marker-tool-control {
+  margin: 0 0 22px 10px;
+}
+
+.marker-tool-button {
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 1px solid rgb(0 0 0 / 14%);
+  border-radius: 9px;
+  background: #fff;
+  color: #24313c;
+  box-shadow: 0 1px 6px rgb(0 0 0 / 22%);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.marker-tool-button:hover { background: #eef3f7; }
+
+.marker-tool-control.is-active .marker-tool-button {
+  border-color: #1769aa;
+  background: #1769aa;
+  color: #fff;
+}
+
+.marker-tool-button:focus-visible {
+  outline: 3px solid #f0b429;
+  outline-offset: 2px;
+}
+
+#map.marker-tool-active {
+  cursor: crosshair;
+}
