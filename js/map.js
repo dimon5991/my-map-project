@@ -4,6 +4,8 @@
   const mapElement = document.getElementById("map");
   if (!mapElement || typeof L === "undefined") return;
 
+  const STORAGE_KEY = "my-map-project-saved-markers";
+
   const map = L.map(mapElement, {
     center: [20, 0],
     zoom: 2,
@@ -14,7 +16,6 @@
 
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
-  // Базова вулична карта. Дотримуйтеся політики використання тайлів OSM.
   const streetLayer = L.tileLayer(
     "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
@@ -23,7 +24,6 @@
     }
   );
 
-  // Супутникові знімки Esri; умови та вимоги до атрибуції діють для цього сервісу.
   const satelliteLayer = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     {
@@ -34,8 +34,39 @@
 
   streetLayer.addTo(map);
 
-  // Додавання мітки кліком. Координати показуються у спливаючому вікні;
-  // мітку можна перетягувати, координати оновлюються автоматично.
+  let markers = [];
+
+  function readSavedMarkers() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return [];
+      const saved = JSON.parse(raw);
+      if (!Array.isArray(saved)) return [];
+      return saved.filter((item) =>
+        item &&
+        Number.isFinite(item.lat) &&
+        Number.isFinite(item.lng) &&
+        item.lat >= -90 && item.lat <= 90 &&
+        item.lng >= -180 && item.lng <= 180
+      );
+    } catch (error) {
+      console.warn("Не вдалося прочитати збережені мітки:", error);
+      return [];
+    }
+  }
+
+  function saveMarkers() {
+    try {
+      const data = markers.map((marker) => {
+        const point = marker.getLatLng();
+        return { lat: point.lat, lng: point.lng };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.warn("Не вдалося зберегти мітки у цьому браузері:", error);
+    }
+  }
+
   function formatCoordinates(latlng) {
     return {
       latitude: latlng.lat.toFixed(6),
@@ -85,21 +116,36 @@
     deleteButton.addEventListener("click", () => {
       map.closePopup();
       map.removeLayer(marker);
+      markers = markers.filter((savedMarker) => savedMarker !== marker);
+      saveMarkers();
     });
     wrapper.appendChild(deleteButton);
 
     return wrapper;
   }
 
-  map.on("click", (event) => {
-    const marker = L.marker(event.latlng, { draggable: true }).addTo(map);
-    marker.bindPopup(coordinatesPopup(marker)).openPopup();
+  function addMarker(latlng, shouldSave) {
+    const marker = L.marker(latlng, { draggable: true }).addTo(map);
+    markers.push(marker);
+    marker.bindPopup(coordinatesPopup(marker));
 
     marker.on("dragend", () => {
       marker.setPopupContent(coordinatesPopup(marker));
+      saveMarkers();
       marker.openPopup();
     });
+
+    if (shouldSave) saveMarkers();
+    return marker;
+  }
+
+  // Клік на карту додає мітку, а координати автоматично зберігаються в цьому браузері.
+  map.on("click", (event) => {
+    addMarker(event.latlng, true).openPopup();
   });
+
+  // Відновити мітки після перезавантаження сторінки.
+  readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false));
 
   const ModeControl = L.Control.extend({
     options: { position: "topright" },
@@ -149,7 +195,7 @@
     options: { position: "topleft" },
     onAdd: function () {
       const container = L.DomUtil.create("div", "map-marker-hint");
-      container.textContent = "Клікніть на карту, щоб додати мітку";
+      container.textContent = "Клікніть на карту, щоб додати мітку. Мітки зберігаються в цьому браузері.";
       L.DomEvent.disableClickPropagation(container);
       L.DomEvent.disableScrollPropagation(container);
       return container;
@@ -158,6 +204,5 @@
 
   map.addControl(new HintControl());
 
-  // Коректно перерахувати розміри карти після першого відображення.
   window.requestAnimationFrame(() => map.invalidateSize());
 })();
