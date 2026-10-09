@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Локації постачальників, розробників та глобальної логістики</title>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -59,6 +60,9 @@
     <script src="data/continents/asia/vietnam/minerals.js"></script>
     <script src="data/continents/europe/netherlands/minerals.js"></script>
 
+    <!-- Leaflet map library -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <!-- Application modules -->
     <script src="js/map.js"></script>
     <script src="js/routes.js"></script>
@@ -71,8 +75,6 @@
     <script src="js/scenes/energy.js"></script>
     <script src="js/menu.js"></script>
     <script src="js/app.js"></script>
-
-    <!-- Google Maps JavaScript API -->
-    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4kr6Aj-d8JQmZ2czpe1NKFKzgx1u3re4&loading=async&callback=initGoogleMap&language=uk&region=UA"></script>
+    <script>initLeafletMap();</script>
 </body>
 </html>
