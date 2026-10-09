@@ -108,22 +108,25 @@
   map.on("click", (event) => addMarker(event.latlng, true).openPopup());
   readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false));
 
-  // Search: first try coordinates, otherwise use a single explicit geocoding request.
-  async function searchPlace(query, status, form) {
-    const trimmed = query.trim();
-    if (!trimmed) {
-      status.textContent = "Введи назву міста, шахти або координати.";
+  // Search by country, region and mine name; all fields are optional.
+  async function searchPlace(fields, status, form) {
+    const country = fields.country.trim();
+    const region = fields.region.trim();
+    const mine = fields.mine.trim();
+    const query = [mine, region, country].filter(Boolean).join(", ");
+
+    if (!query) {
+      status.textContent = "Вкажи хоча б країну, регіон або назву шахти.";
       return;
     }
 
-    const coordinateMatch = trimmed.match(/^\s*(-?\d+(?:[.,]\d+)?)\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)\s*$/);
+    const coordinateMatch = query.match(/^\s*(-?\d+(?:[.,]\d+)?)\s*[,; ]\s*(-?\d+(?:[.,]\d+)?)\s*$/);
     if (coordinateMatch) {
       const lat = Number(coordinateMatch[1].replace(",", "."));
       const lng = Number(coordinateMatch[2].replace(",", "."));
       if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
         map.setView([lat, lng], 12);
-        const marker = addMarker([lat, lng], true, "Знайдені координати");
-        marker.openPopup();
+        addMarker([lat, lng], true, "Знайдені координати").openPopup();
         status.textContent = "Перейшов до координат: " + lat + ", " + lng;
       } else {
         status.textContent = "Координати поза допустимими межами. Широта: −90…90, довгота: −180…180.";
@@ -133,21 +136,22 @@
 
     const submitButton = form.querySelector("button[type=submit]");
     submitButton.disabled = true;
-    status.textContent = "Шукаю місце…";
+    status.textContent = "Шукаю: " + query + "…";
     try {
       const url = new URL("https://nominatim.openstreetmap.org/search");
-      url.searchParams.set("q", trimmed);
+      url.searchParams.set("q", query);
       url.searchParams.set("format", "jsonv2");
       url.searchParams.set("limit", "5");
       url.searchParams.set("addressdetails", "1");
+      url.searchParams.set("namedetails", "1");
       const response = await fetch(url.toString(), { headers: { "Accept-Language": "uk,en" } });
       if (!response.ok) throw new Error("Сервіс пошуку тимчасово недоступний.");
       const results = await response.json();
       if (!results.length) {
-        status.textContent = "Нічого не знайдено. Спробуй назву англійською або додай країну.";
+        status.textContent = "Нічого не знайдено. Спробуй англійське написання назви або інший варіант.";
+        document.getElementById("place-search-results").replaceChildren();
         return;
       }
-
       showSearchResults(results, status);
     } catch (error) {
       status.textContent = "Не вдалося виконати пошук. Перевір інтернет-з’єднання та спробуй ще раз.";
@@ -170,8 +174,8 @@
         const lat = Number(result.lat);
         const lng = Number(result.lon);
         map.setView([lat, lng], 12);
-        const marker = addMarker([lat, lng], true, result.name || result.display_name.split(",")[0]);
-        marker.openPopup();
+        const label = result.name || result.display_name.split(",")[0];
+        addMarker([lat, lng], true, label).openPopup();
         status.textContent = "Знайдено: " + result.display_name;
         list.replaceChildren();
       });
@@ -186,29 +190,46 @@
     onAdd: function () {
       const panel = L.DomUtil.create("div", "place-search-panel");
       const heading = L.DomUtil.create("strong", "place-search-heading", panel);
-      heading.textContent = "Пошук на карті";
+      heading.textContent = "Пошук шахти";
 
       const form = L.DomUtil.create("form", "place-search-form", panel);
-      const input = L.DomUtil.create("input", "place-search-input", form);
-      input.type = "search";
-      input.placeholder = "Місто, шахта або координати";
-      input.setAttribute("aria-label", "Пошук міста, шахти або координат");
-      input.autocomplete = "off";
+      const fields = [
+        { key: "country", label: "Країна", placeholder: "Наприклад, Chile" },
+        { key: "region", label: "Регіон / область", placeholder: "Наприклад, Antofagasta" },
+        { key: "mine", label: "Назва шахти", placeholder: "Наприклад, Escondida mine" }
+      ];
+      const inputs = {};
+
+      fields.forEach((field) => {
+        const label = L.DomUtil.create("label", "place-search-field", form);
+        label.textContent = field.label;
+        const input = L.DomUtil.create("input", "place-search-input", label);
+        input.type = "text";
+        input.placeholder = field.placeholder;
+        input.autocomplete = "off";
+        input.name = field.key;
+        input.setAttribute("aria-label", field.label);
+        inputs[field.key] = input;
+      });
 
       const button = L.DomUtil.create("button", "place-search-submit", form);
       button.type = "submit";
-      button.textContent = "Знайти";
+      button.textContent = "Знайти шахту";
 
       const status = L.DomUtil.create("div", "place-search-status", panel);
       status.setAttribute("role", "status");
-      status.textContent = "Приклад: Santiago, Chile або -22.454, -68.929";
+      status.textContent = "Заповни один або кілька полів. Приклад: Chile / Antofagasta / Escondida.";
 
       const results = L.DomUtil.create("div", "place-search-results", panel);
       results.id = "place-search-results";
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        searchPlace(input.value, status, form);
+        searchPlace({
+          country: inputs.country.value,
+          region: inputs.region.value,
+          mine: inputs.mine.value
+        }, status, form);
       });
       L.DomEvent.disableClickPropagation(panel);
       L.DomEvent.disableScrollPropagation(panel);
