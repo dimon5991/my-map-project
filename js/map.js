@@ -149,7 +149,7 @@
   }
 
   const mineMarkers = [];
-  (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).forEach((mine) => {
+  mineRecords.forEach((mine, mineIndex) => {
     if (!mine || !mine.coordinates) return;
     const lat = Number(mine.coordinates.latitude);
     const lng = Number(mine.coordinates.longitude);
@@ -160,7 +160,21 @@
       title: mine.name || "Мідна шахта",
       alt: mine.name || "Мідна шахта"
     }).addTo(map);
-    marker.bindPopup(createMinePopup(mine), { maxWidth: 340, minWidth: 260 });
+
+    let saveCallback;
+    saveCallback = async (updatedMine) => {
+      const nextRecords = mineRecords.map((record, index) => index === mineIndex ? updatedMine : record);
+      const saved = await saveMineRecords(nextRecords);
+      if (!saved) return;
+
+      mineRecords = nextRecords;
+      window.COPPER_MINES = mineRecords;
+      marker.setLatLng([updatedMine.coordinates.latitude, updatedMine.coordinates.longitude]);
+      marker.setPopupContent(createMinePopup(updatedMine, saveCallback));
+      marker.openPopup();
+    };
+
+    marker.bindPopup(createMinePopup(mine, saveCallback), { maxWidth: 340, minWidth: 260 });
     mineMarkers.push({ data: mine, marker });
   });
 
