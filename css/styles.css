@@ -512,3 +512,26 @@ html, body, .map-page {
   outline: 3px solid #f0b429;
   outline-offset: 2px;
 }
+
+
+/* Кнопка фіксації координатної мітки */
+.marker-lock-button {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: #eef2f6;
+  color: #24313c;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.marker-lock-button:hover { background: #dfe7ee; }
+.marker-lock-button:focus-visible {
+  outline: 3px solid #f0b429;
+  outline-offset: 2px;
+}
