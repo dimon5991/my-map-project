@@ -47,7 +47,8 @@
   }
 
   function markerRecords() {
-    return markers.map((marker) => {
+    const objectMarkers = new Set(mineMarkers.map((entry) => entry.marker));
+    return markers.filter((marker) => !objectMarkers.has(marker)).map((marker) => {
       const point = marker.getLatLng();
       return {
         id: marker._syncId || (marker._syncId = makeId()),
@@ -130,11 +131,11 @@
       stateSha = result.sha || null;
       const state = result.state;
 
-      // If shared mines exist, they replace the bundled starting data.
-      if (Array.isArray(state.mines) && state.mines.length > 0) {
+      // Existing shared state is authoritative, including an intentionally empty mine list.
+      if (stateSha) {
         mineMarkers.forEach((entry) => map.removeLayer(entry.marker));
         mineMarkers.length = 0;
-        state.mines.forEach(addMineToMap);
+        (Array.isArray(state.mines) ? state.mines : []).forEach(addMineToMap);
         window.COPPER_MINES = state.mines.slice();
       }
 
