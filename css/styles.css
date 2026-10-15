@@ -439,3 +439,40 @@ html, body, .map-page {
 #map.marker-tool-active {
   cursor: crosshair;
 }
+
+
+/* Форма редагування картки шахти */
+.mine-edit-button,
+.mine-edit-save,
+.mine-edit-cancel {
+  display: block;
+  width: 100%;
+  min-height: 38px;
+  margin-top: 9px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.mine-edit-button,
+.mine-edit-save {
+  background: #1769aa;
+  color: #fff;
+}
+.mine-edit-button:hover,
+.mine-edit-save:hover { background: #12558b; }
+.mine-edit-cancel {
+  background: #eef2f6;
+  color: #24313c;
+}
+.mine-edit-cancel:hover { background: #dfe7ee; }
+.mine-edit-form { min-width: 245px; max-width: 320px; }
+.mine-edit-form .place-search-field { margin-top: 8px; }
+.mine-edit-form .place-search-input { display: block; margin-top: 4px; }
+.mine-edit-form button:focus-visible {
+  outline: 3px solid #f0b429;
+  outline-offset: 2px;
+}
