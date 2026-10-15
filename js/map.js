@@ -151,6 +151,9 @@
     editButton.className = "mine-edit-button";
     editButton.textContent = "Редагувати картку";
     editButton.addEventListener("click", () => {
+      const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
+      const mineMarker = mineEntry ? mineEntry.marker : null;
+      if (!mineMarker) return;
       const form = document.createElement("form");
       form.className = "mine-edit-form";
       const fields = [
@@ -198,8 +201,8 @@
       cancel.className = "mine-edit-cancel";
       cancel.textContent = "Скасувати";
       cancel.addEventListener("click", () => {
-        marker.setPopupContent(createMinePopup(mine));
-        marker.openPopup();
+        mineMarker.setPopupContent(createMinePopup(mine));
+        mineMarker.openPopup();
       });
       form.appendChild(cancel);
       form.addEventListener("submit", (event) => {
@@ -219,11 +222,11 @@
           otherMetals: inputs.otherMetals.value.split(",").map((v) => v.trim()).filter(Boolean),
           coordinates: { latitude, longitude }
         });
-        marker.setLatLng([latitude, longitude]);
-        marker.setPopupContent(createMinePopup(mine));
-        marker.openPopup();
+        mineMarker.setLatLng([latitude, longitude]);
+        mineMarker.setPopupContent(createMinePopup(mine));
+        mineMarker.openPopup();
       });
-      marker.setPopupContent(form);
+      mineMarker.setPopupContent(form);
     });
     card.appendChild(editButton);
     return card;
