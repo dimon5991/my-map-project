@@ -37,7 +37,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(markers.map((marker) => {
         const point = marker.getLatLng();
-        return { lat: point.lat, lng: point.lng };
+        return { lat: point.lat, lng: point.lng, locked: marker.dragging ? !marker.dragging.enabled() : true };
       })));
     } catch (error) {
       console.warn("Не вдалося зберегти мітки:", error);
@@ -46,6 +46,26 @@
 
   function formatCoordinates(latlng) {
     return { latitude: latlng.lat.toFixed(6), longitude: latlng.lng.toFixed(6) };
+  }
+
+  function addMarkerLockControl(container, marker, label, popupFactory) {
+    if (!marker.dragging) return;
+    const lockButton = document.createElement("button");
+    lockButton.type = "button";
+    lockButton.className = "marker-lock-button";
+    const updateLabel = () => {
+      lockButton.textContent = marker.dragging.enabled() ? "Зафіксувати мітку" : "Розблокувати мітку";
+    };
+    updateLabel();
+    lockButton.addEventListener("click", () => {
+      if (marker.dragging.enabled()) marker.dragging.disable();
+      else marker.dragging.enable();
+      saveMarkers();
+      updateLabel();
+      if (popupFactory) marker.setPopupContent(popupFactory());
+      marker.openPopup();
+    });
+    container.appendChild(lockButton);
   }
 
   function coordinatesPopup(marker, label) {
@@ -77,6 +97,7 @@
       } else copyButton.textContent = text;
     });
     wrapper.appendChild(copyButton);
+    addMarkerLockControl(wrapper, marker, label, () => coordinatesPopup(marker, label));
 
     const createCardButton = document.createElement("button");
     createCardButton.type = "button";
@@ -102,8 +123,8 @@
     return wrapper;
   }
 
-  function addMarker(latlng, shouldSave, label) {
-    const marker = L.marker(latlng, { draggable: true }).addTo(map);
+  function addMarker(latlng, shouldSave, label, locked = false) {
+    const marker = L.marker(latlng, { draggable: !locked }).addTo(map);
     markers.push(marker);
     marker.bindPopup(coordinatesPopup(marker, label));
     marker.on("dragend", () => {
@@ -239,6 +260,10 @@
       mineMarker.setPopupContent(form);
     });
     card.appendChild(editButton);
+    const associatedMarker = mineMarkers.find((item) => item.data.id === mine.id);
+    if (associatedMarker && markers.includes(associatedMarker.marker)) {
+      addMarkerLockControl(card, associatedMarker.marker, mine.name, () => createMinePopup(mine));
+    }
     return card;
   }
 
@@ -383,7 +408,7 @@
     if (!markerToolEnabled) return;
     addMarker(event.latlng, true).openPopup();
   });
-  readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false));
+  readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false, undefined, point.locked === true));
 
   // Search by country, region and mine name; all fields are optional.
   async function searchPlace(fields, status, form) {
