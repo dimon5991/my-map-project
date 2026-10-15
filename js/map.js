@@ -5,6 +5,12 @@
   if (!mapElement || typeof L === "undefined") return;
 
   const STORAGE_KEY = "my-map-project-saved-markers";
+  const API_URL = "https://my-map-project-api.dimon5991.workers.dev/";
+  let stateSha = null;
+  let saveTimer = null;
+  let saveChain = Promise.resolve();
+  let loadingSharedState = false;
+  let sharedStateLoaded = false;
   const map = L.map(mapElement, { center: [20, 0], zoom: 2, minZoom: 2, worldCopyJump: true, zoomControl: false });
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
@@ -26,21 +32,136 @@
       const saved = raw ? JSON.parse(raw) : [];
       if (!Array.isArray(saved)) return [];
       return saved.filter((item) => item && Number.isFinite(item.lat) && Number.isFinite(item.lng) &&
-        item.lat >= -90 && item.lat <= 90 && item.lng >= -180 && item.lng <= 180);
+        item.lat >= -90 && item.lat <= 90 && item.lng >= -180 && item.lng <= 180)
+        .map((item) => ({ ...item, id: item.id || makeId(), label: item.label || "" }));
     } catch (error) {
       console.warn("Не вдалося прочитати збережені мітки:", error);
       return [];
     }
   }
 
+  function makeId() {
+    return (typeof crypto !== "undefined" && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : "obj-" + Date.now() + "-" + Math.random().toString(36).slice(2, 10);
+  }
+
+  function markerRecords() {
+    return markers.map((marker) => {
+      const point = marker.getLatLng();
+      return {
+        id: marker._syncId || (marker._syncId = makeId()),
+        lat: point.lat,
+        lng: point.lng,
+        locked: marker.dragging ? !marker.dragging.enabled() : true,
+        label: marker._syncLabel || ""
+      };
+    });
+  }
+
   function saveMarkers() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(markers.map((marker) => {
-        const point = marker.getLatLng();
-        return { lat: point.lat, lng: point.lng, locked: marker.dragging ? !marker.dragging.enabled() : true };
-      })));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(markerRecords()));
     } catch (error) {
-      console.warn("Не вдалося зберегти мітки:", error);
+      console.warn("Не вдалося зберегти локальний кеш міток:", error);
+    }
+    if (!loadingSharedState) scheduleSharedSave();
+  }
+
+  function scheduleSharedSave() {
+    if (loadingSharedState) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      saveChain = saveChain.then(saveSharedState).catch((error) => {
+        console.error("Не вдалося синхронізувати карту:", error);
+      });
+    }, 600);
+  }
+
+  async function saveSharedState() {
+    const payloadState = {
+      version: 1,
+      markers: markerRecords(),
+      mines: mineMarkers.map((entry) => entry.data)
+    };
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: payloadState, baseSha: stateSha })
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (response.status === 409 || result.conflict) {
+      alert("Карта вже змінена на іншому пристрої. Щоб не перезаписати чужі зміни, оновіть сторінку та повторіть дію.");
+      throw new Error(result.error || "Конфлікт версій спільних даних.");
+    }
+    if (!response.ok || !result.ok) {
+      alert("Не вдалося зберегти зміни на сервері. Перевірте з'єднання та спробуйте ще раз.");
+      throw new Error(result.error || "Помилка збереження спільних даних.");
+    }
+
+    stateSha = result.sha;
+  }
+
+  function addMineToMap(mine) {
+    if (!mine || !mine.coordinates) return;
+    const lat = Number(mine.coordinates.latitude);
+    const lng = Number(mine.coordinates.longitude);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
+
+    const marker = L.marker([lat, lng], {
+      title: mine.name || "Мідний об'єкт",
+      alt: mine.name || "Мідний об'єкт"
+    }).addTo(map);
+    marker.bindPopup(createMinePopup(mine), { maxWidth: 340, minWidth: 260 });
+    mineMarkers.push({ data: mine, marker });
+  }
+
+  async function loadSharedState() {
+    loadingSharedState = true;
+    try {
+      const response = await fetch(API_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const result = await response.json();
+      if (!result.ok || !result.state) throw new Error("Некоректна відповідь API.");
+      sharedStateLoaded = true;
+      stateSha = result.sha || null;
+      const state = result.state;
+
+      // If shared mines exist, they replace the bundled starting data.
+      if (Array.isArray(state.mines) && state.mines.length > 0) {
+        mineMarkers.forEach((entry) => map.removeLayer(entry.marker));
+        mineMarkers.length = 0;
+        state.mines.forEach(addMineToMap);
+        window.COPPER_MINES = state.mines.slice();
+      }
+
+      // Server markers are authoritative. For a new empty store, migrate local markers.
+      markers.forEach((marker) => map.removeLayer(marker));
+      markers = [];
+      const savedMarkers = Array.isArray(state.markers) && state.markers.length > 0
+        ? state.markers
+        : readSavedMarkers();
+
+      savedMarkers.forEach((point) => {
+        const marker = addMarker(
+          [point.lat, point.lng], false, point.label || undefined,
+          point.locked === true, point.id
+        );
+        marker._syncLabel = point.label || "";
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(markerRecords()));
+      } catch (_) {}
+    } catch (error) {
+      console.error("Не вдалося завантажити спільну карту:", error);
+      alert("Не вдалося завантажити спільні дані. Карта може показувати лише локальні дані цього пристрою.");
+    } finally {
+      loadingSharedState = false;
+      if (sharedStateLoaded && !stateSha) scheduleSharedSave();
     }
   }
 
@@ -117,14 +238,21 @@
       map.closePopup();
       map.removeLayer(marker);
       markers = markers.filter((item) => item !== marker);
+      const linkedMine = mineMarkers.find((entry) => entry.marker === marker);
+      if (linkedMine) {
+        mineMarkers.splice(mineMarkers.indexOf(linkedMine), 1);
+        window.COPPER_MINES = mineMarkers.map((entry) => entry.data);
+      }
       saveMarkers();
     });
     wrapper.appendChild(deleteButton);
     return wrapper;
   }
 
-  function addMarker(latlng, shouldSave, label, locked = false) {
+  function addMarker(latlng, shouldSave, label, locked = false, id = null) {
     const marker = L.marker(latlng, { draggable: !locked }).addTo(map);
+    marker._syncId = id || makeId();
+    marker._syncLabel = label || "";
     markers.push(marker);
     marker.bindPopup(coordinatesPopup(marker, label));
     marker.on("dragend", () => {
@@ -255,6 +383,8 @@
         });
         mineMarker.setLatLng([latitude, longitude]);
         mineMarker.setPopupContent(createMinePopup(mine));
+        window.COPPER_MINES = mineMarkers.map((entry) => entry.data);
+        scheduleSharedSave();
         mineMarker.openPopup();
       });
       mineMarker.setPopupContent(form);
@@ -308,7 +438,7 @@
 
     const note = document.createElement("p");
     note.className = "place-search-status";
-    note.textContent = "Картка буде додана до карти в цьому сеансі. Постійне збереження в GitHub ще не підключено.";
+    note.textContent = "Картка буде синхронізована зі спільною картою.";
     form.appendChild(note);
 
     const createButton = document.createElement("button");
@@ -356,6 +486,9 @@
       marker.setLatLng([latitude, longitude]);
       mineMarkers.push({ data: mine, marker });
       if (Array.isArray(window.COPPER_MINES)) window.COPPER_MINES.push(mine);
+      marker._syncLabel = mine.name;
+      saveMarkers();
+      scheduleSharedSave();
       marker.setPopupContent(createMinePopup(mine));
       marker.openPopup();
     });
@@ -364,20 +497,7 @@
   }
 
   const mineMarkers = [];
-  (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).forEach((mine) => {
-    if (!mine || !mine.coordinates) return;
-    const lat = Number(mine.coordinates.latitude);
-    const lng = Number(mine.coordinates.longitude);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
-        lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
-
-    const marker = L.marker([lat, lng], {
-      title: mine.name || "Мідна шахта",
-      alt: mine.name || "Мідна шахта"
-    }).addTo(map);
-    marker.bindPopup(createMinePopup(mine), { maxWidth: 340, minWidth: 260 });
-    mineMarkers.push({ data: mine, marker });
-  });
+  (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).forEach(addMineToMap);
 
   let markerToolEnabled = false;
 
@@ -408,7 +528,10 @@
     if (!markerToolEnabled) return;
     addMarker(event.latlng, true).openPopup();
   });
-  readSavedMarkers().forEach((point) => addMarker([point.lat, point.lng], false, undefined, point.locked === true));
+  readSavedMarkers().forEach((point) => {
+    const marker = addMarker([point.lat, point.lng], false, point.label || undefined, point.locked === true, point.id);
+    marker._syncLabel = point.label || "";
+  });
 
   // Search by country, region and mine name; all fields are optional.
   async function searchPlace(fields, status, form) {
@@ -662,5 +785,6 @@
 
 
 
+  loadSharedState();
   window.requestAnimationFrame(() => map.invalidateSize());
 })();
