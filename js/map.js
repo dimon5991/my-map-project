@@ -78,6 +78,16 @@
     });
     wrapper.appendChild(copyButton);
 
+    const createCardButton = document.createElement("button");
+    createCardButton.type = "button";
+    createCardButton.className = "mine-edit-button";
+    createCardButton.textContent = "Створити картку об'єкта";
+    createCardButton.addEventListener("click", () => {
+      marker.setPopupContent(createObjectForm(marker, label));
+      marker.openPopup();
+    });
+    wrapper.appendChild(createCardButton);
+
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "marker-delete-button";
@@ -230,6 +240,102 @@
     });
     card.appendChild(editButton);
     return card;
+  }
+
+  function createObjectForm(marker, markerLabel) {
+    const point = marker.getLatLng();
+    const form = document.createElement("form");
+    form.className = "mine-edit-form";
+    const heading = document.createElement("h3");
+    heading.className = "mine-card-title";
+    heading.textContent = "Нова картка об'єкта";
+    form.appendChild(heading);
+
+    const fieldSpecs = [
+      ["name", "Назва об'єкта", ""],
+      ["country", "Країна", ""],
+      ["region", "Регіон", ""],
+      ["owner", "Власник", ""],
+      ["status", "Поточний стан", ""],
+      ["process", "Процес", ""],
+      ["depositType", "Тип родовища", ""],
+      ["oreType", "Тип руди", ""],
+      ["otherMetals", "Інші метали (через кому)", ""],
+      ["latitude", "Широта", point.lat],
+      ["longitude", "Довгота", point.lng]
+    ];
+    const inputs = {};
+    fieldSpecs.forEach(([key, fieldLabel, initialValue]) => {
+      const label = document.createElement("label");
+      label.className = "place-search-field";
+      label.textContent = fieldLabel;
+      const input = document.createElement("input");
+      input.className = "place-search-input";
+      input.name = key;
+      input.type = ["latitude", "longitude"].includes(key) ? "number" : "text";
+      if (input.type === "number") input.step = "any";
+      input.value = initialValue === undefined || initialValue === null ? "" : String(initialValue);
+      input.required = ["name", "country", "latitude", "longitude"].includes(key);
+      label.appendChild(input);
+      form.appendChild(label);
+      inputs[key] = input;
+    });
+
+    const note = document.createElement("p");
+    note.className = "place-search-status";
+    note.textContent = "Картка буде додана до карти в цьому сеансі. Постійне збереження в GitHub ще не підключено.";
+    form.appendChild(note);
+
+    const createButton = document.createElement("button");
+    createButton.type = "submit";
+    createButton.className = "mine-edit-save";
+    createButton.textContent = "Створити картку";
+    form.appendChild(createButton);
+
+    const cancelButton = document.createElement("button");
+    cancelButton.type = "button";
+    cancelButton.className = "mine-edit-cancel";
+    cancelButton.textContent = "Скасувати";
+    cancelButton.addEventListener("click", () => {
+      marker.setPopupContent(coordinatesPopup(marker, markerLabel));
+      marker.openPopup();
+    });
+    form.appendChild(cancelButton);
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const latitude = Number(inputs.latitude.value);
+      const longitude = Number(inputs.longitude.value);
+      if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
+          !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+        note.textContent = "Перевірте координати: широта від −90 до 90, довгота від −180 до 180.";
+        return;
+      }
+      const mine = {
+        id: "object-" + Date.now(),
+        name: inputs.name.value.trim(),
+        country: inputs.country.value.trim(),
+        region: inputs.region.value.trim(),
+        owner: inputs.owner.value.trim(),
+        status: inputs.status.value.trim(),
+        process: inputs.process.value.trim(),
+        depositType: inputs.depositType.value.trim(),
+        oreType: inputs.oreType.value.trim(),
+        otherMetals: inputs.otherMetals.value.split(",").map((value) => value.trim()).filter(Boolean),
+        coordinates: { latitude, longitude }
+      };
+      if (!mine.name || !mine.country) {
+        note.textContent = "Заповніть принаймні назву об'єкта та країну.";
+        return;
+      }
+      marker.setLatLng([latitude, longitude]);
+      mineMarkers.push({ data: mine, marker });
+      if (Array.isArray(window.COPPER_MINES)) window.COPPER_MINES.push(mine);
+      marker.setPopupContent(createMinePopup(mine));
+      marker.openPopup();
+    });
+
+    return form;
   }
 
   const mineMarkers = [];
