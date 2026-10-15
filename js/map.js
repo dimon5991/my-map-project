@@ -141,7 +141,7 @@
       // Server markers are authoritative. For a new empty store, migrate local markers.
       markers.forEach((marker) => map.removeLayer(marker));
       markers = [];
-      const savedMarkers = Array.isArray(state.markers) && state.markers.length > 0
+      const savedMarkers = stateSha
         ? state.markers
         : readSavedMarkers();
 
