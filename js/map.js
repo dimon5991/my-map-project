@@ -54,7 +54,7 @@
     lockButton.type = "button";
     lockButton.className = "marker-lock-button";
     const updateLabel = () => {
-      lockButton.textContent = marker.dragging.enabled() ? "Зафіксувати мітку" : "Розблокувати мітку";
+      lockButton.textContent = marker.dragging.enabled() ? "🔒 Зафіксувати мітку" : "🔓 Розблокувати мітку";
     };
     updateLabel();
     lockButton.addEventListener("click", () => {
