@@ -156,8 +156,10 @@
   function initGlobe() {
     if (globeInstance || typeof window.Globe !== "function") return;
     globeInstance = window.Globe()(globeCanvas)
+      .rendererConfig({ antialias: true, alpha: true, powerPreference: "high-performance" })
       .backgroundColor("#030a14")
-      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-night.jpg")
+      // Детальніша денна текстура Blue Marble замість темної нічної текстури з нижчою деталізацією.
+      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
       .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
       .showAtmosphere(true)
       .atmosphereColor("#4aa9df")
