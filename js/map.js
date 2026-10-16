@@ -454,7 +454,7 @@
 
   function showOwnershipConnection(mine) {
     clearOwnershipConnection();
-    if (!mine || !/\\bBHP\\b/i.test(mine.owner || "")) return;
+    if (!mine || !/\bBHP\b/i.test(mine.owner || "")) return;
     const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
     if (!mineEntry) return;
     const from = mineEntry.marker.getLatLng();
