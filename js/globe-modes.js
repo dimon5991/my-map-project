@@ -158,8 +158,8 @@
     globeInstance = window.Globe()(globeCanvas)
       .rendererConfig({ antialias: true, alpha: true, powerPreference: "high-performance" })
       .backgroundColor("#030a14")
-      // Детальніша денна текстура Blue Marble замість темної нічної текстури з нижчою деталізацією.
-      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+      // Високороздільна денна текстура NASA у проєкції equirectangular (2:1).
+      .globeImageUrl("https://eoimages.gsfc.nasa.gov/images/imagerecords/74000/74192/world.topo.bathy.200412.3x5400x2700.jpg")
       .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
       .showAtmosphere(true)
       .atmosphereColor("#4aa9df")
@@ -191,10 +191,9 @@
     try {
       const C = window.Cesium;
       cesiumViewer = new C.Viewer(cesiumCanvas, {
-        imageryProvider: new C.UrlTemplateImageryProvider({
-          // Глобальна супутникова мозаїка: на відміну від OSM-тайлів, чітко показує континенти й рельєф.
-          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          credit: "Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community"
+        imageryProvider: new C.ArcGisMapServerImageryProvider({
+          // Підключення до ArcGIS MapServer як провайдера Cesium, а не шаблону окремих URL тайлів.
+          url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
         }),
         terrainProvider: new C.EllipsoidTerrainProvider(),
         baseLayerPicker: false, geocoder: false, homeButton: false, sceneModePicker: false,
