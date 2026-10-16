@@ -287,8 +287,9 @@
         pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
         pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
-        const hit = raycaster.intersectObjects(pointObjects, false)[0];
-        if (hit && hit.object.userData.point) showPoint(hit.object.userData.point);
+        // Сфера перекриває маркери на зворотному боці Землі.
+        const hit = raycaster.intersectObjects([earth, ...pointObjects], false)[0];
+        if (hit && hit.object !== earth && hit.object.userData.point) showPoint(hit.object.userData.point);
       });
       window.addEventListener("resize", resize);
       resize(); renderLoop();
