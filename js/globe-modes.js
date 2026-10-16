@@ -190,8 +190,9 @@
       const C = window.Cesium;
       cesiumViewer = new C.Viewer(cesiumCanvas, {
         imageryProvider: new C.UrlTemplateImageryProvider({
-          url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-          credit: "© OpenStreetMap contributors"
+          // Глобальна супутникова мозаїка: на відміну від OSM-тайлів, чітко показує континенти й рельєф.
+          url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+          credit: "Tiles © Esri, Maxar, Earthstar Geographics, and the GIS User Community"
         }),
         terrainProvider: new C.EllipsoidTerrainProvider(),
         baseLayerPicker: false, geocoder: false, homeButton: false, sceneModePicker: false,
