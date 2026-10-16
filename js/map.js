@@ -532,9 +532,10 @@
       const panel = L.DomUtil.create("div", "place-search-panel");
       const toggleButton = L.DomUtil.create("button", "place-search-toggle", panel);
       toggleButton.type = "button";
-      toggleButton.textContent = "Згорнути пошук";
-      toggleButton.setAttribute("aria-expanded", "true");
-      toggleButton.setAttribute("aria-label", "Згорнути або розгорнути вікно пошуку");
+      panel.classList.add("is-collapsed");
+      toggleButton.textContent = "Пошук";
+      toggleButton.setAttribute("aria-expanded", "false");
+      toggleButton.setAttribute("aria-label", "Розгорнути або згорнути вікно пошуку");
       toggleButton.addEventListener("click", () => {
         const collapsed = panel.classList.toggle("is-collapsed");
         toggleButton.textContent = collapsed ? "Пошук" : "Згорнути пошук";
