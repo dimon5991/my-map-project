@@ -703,3 +703,108 @@ html, body, .map-page {
 @media (prefers-reduced-motion: reduce) {
   .ownership-link-line { animation: none; }
 }
+
+
+
+/* 3D-сфера з картографічною текстурою, яка використовує ті самі дані, що й Leaflet */
+#leaflet-globe-stage {
+  position: absolute;
+  z-index: 850;
+  inset: 0;
+  overflow: hidden;
+  background: #071522;
+  color: #f4f8fb;
+}
+#leaflet-globe-stage[hidden] { display: none !important; }
+#leaflet-globe-canvas, #leaflet-globe-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.leaflet-globe-toggle {
+  position: absolute;
+  z-index: 1300;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-height: 40px;
+  padding: 8px 15px;
+  border: 1px solid rgba(255,255,255,.35);
+  border-radius: 9px;
+  background: #1769aa;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,.24);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.leaflet-globe-toggle:hover { background: #12558b; }
+.leaflet-globe-toggle:focus-visible { outline: 3px solid #f0b429; outline-offset: 3px; }
+.leaflet-globe-toolbar {
+  position: absolute;
+  z-index: 5;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: min(540px, calc(100vw - 28px));
+  padding: 9px 12px;
+  border: 1px solid rgba(161,198,219,.24);
+  border-radius: 10px;
+  background: rgba(8,22,35,.82);
+  box-shadow: 0 4px 18px rgba(0,0,0,.22);
+  backdrop-filter: blur(8px);
+}
+.leaflet-globe-toolbar button {
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid rgba(190,220,237,.3);
+  border-radius: 7px;
+  background: rgba(50,81,103,.72);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+#leaflet-globe-status { color: #c4d9e6; font-size: 12px; line-height: 1.4; }
+.leaflet-globe-card {
+  position: absolute;
+  z-index: 8;
+  right: 14px;
+  top: 68px;
+  width: min(330px, calc(100vw - 28px));
+  max-height: calc(100dvh - 96px);
+  overflow: auto;
+  padding: 17px;
+  border: 1px solid rgba(123,184,216,.42);
+  border-radius: 13px;
+  background: rgba(15,31,45,.94);
+  color: #f4f8fb;
+  box-shadow: 0 8px 28px rgba(0,0,0,.3);
+  backdrop-filter: blur(10px);
+}
+.leaflet-globe-card[hidden] { display: none !important; }
+.leaflet-globe-card > button {
+  float: right;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 6px;
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+}
+.leaflet-globe-card h2 { margin: 0 36px 5px 0; font-size: 20px; }
+#leaflet-globe-card-subtitle { margin: 0 0 13px; color: #b7cbd8; font-size: 12px; }
+#leaflet-globe-card-fields { margin: 0; }
+#leaflet-globe-card-fields dt { margin-top: 9px; color: #9fb8c9; font-size: 11px; }
+#leaflet-globe-card-fields dd { margin: 3px 0 0; color: #fff; font-size: 13px; overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .leaflet-globe-toggle { top: 8px; min-height: 36px; padding: 7px 11px; }
+  .leaflet-globe-toolbar { right: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
+  .leaflet-globe-card { top: 56px; right: 8px; width: min(310px, calc(100vw - 16px)); }
+}
