@@ -30,6 +30,7 @@
   let active = false, started = false, failed = false;
   let renderer, scene, camera, earth, group, animationFrame, raycaster, pointer;
   let pointObjects = [];
+  let overlayObjects = [];
   let dragging = false, moved = false, previousX = 0, previousY = 0;
   let globeTexture;
 
@@ -175,18 +176,24 @@
 
   function addPointsAndRoutes() {
     if (!group) return;
+    overlayObjects.forEach(object => group.remove(object));
+    overlayObjects = [];
     pointObjects = [];
     const points = getPoints();
     const bhp = points.find(p => p.kind === "owner");
     points.forEach(point => {
       const color = point.kind === "mine" ? 0x4bd5ff : point.kind === "owner" ? 0x9af0c6 : 0xffc857;
-      const geometry = new THREE.SphereGeometry(point.kind === "owner" ? 0.075 : 0.052, 12, 10);
-      const material = new THREE.MeshBasicMaterial({ color });
-      const marker = new THREE.Mesh(geometry, material);
-      marker.position.copy(vectorFor(point.lat, point.lng, 5.025));
+      // Larger emissive-looking markers sit clearly above the sphere's polygon surface.
+      const radius = point.kind === "owner" ? 0.105 : point.kind === "mine" ? 0.09 : 0.075;
+      const marker = new THREE.Mesh(
+        new THREE.SphereGeometry(radius, 18, 14),
+        new THREE.MeshBasicMaterial({ color, depthTest: true })
+      );
+      marker.position.copy(vectorFor(point.lat, point.lng, 5.075));
       marker.userData.point = point;
       group.add(marker);
       pointObjects.push(marker);
+      overlayObjects.push(marker);
     });
     if (bhp) {
       points.filter(p => p.kind === "mine" && /BHP/i.test(p.owner || "")).forEach(point => {
@@ -198,6 +205,7 @@
           new THREE.LineDashedMaterial({ color: 0x68d9ff, dashSize: 0.12, gapSize: 0.09, linewidth: 1 }));
         line.computeLineDistances();
         group.add(line);
+        overlayObjects.push(line);
       });
     }
   }
@@ -213,7 +221,8 @@
   function renderLoop() {
     if (!active || !renderer) return;
     animationFrame = requestAnimationFrame(renderLoop);
-    if (earth) earth.rotation.y += 0.00015;
+    // Обертаємо всю групу: текстура, материки, маркери й лінії залишаються синхронними.
+    if (group) group.rotation.y += 0.00015;
     renderer.render(scene, camera);
   }
 
