@@ -378,7 +378,14 @@
       title: mine.name || "Мідна шахта",
       alt: mine.name || "Мідна шахта"
     }).addTo(map);
-    marker.bindPopup(createMinePopup(mine), { maxWidth: 340, minWidth: 260, maxHeight: 500, autoPan: false });
+    marker.bindPopup(createMinePopup(mine), {
+      maxWidth: 340,
+      minWidth: 260,
+      maxHeight: Math.max(180, window.innerHeight - 80),
+      autoPan: true,
+      autoPanPadding: [20, 20],
+      keepInView: true
+    });
     mineMarkers.push({ data: mine, marker });
   });
 
