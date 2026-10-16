@@ -142,40 +142,153 @@
     const card = document.createElement("section");
     card.className = "mine-card";
 
+    const header = document.createElement("header");
+    header.className = "mine-card-header";
+    const headingGroup = document.createElement("div");
+    headingGroup.className = "mine-card-heading-group";
     const title = document.createElement("h3");
     title.className = "mine-card-title";
-    title.textContent = mine.name;
-    card.appendChild(title);
-
+    title.textContent = mine.name || "Об’єкт";
+    headingGroup.appendChild(title);
     const subtitle = document.createElement("div");
     subtitle.className = "mine-card-subtitle";
-    subtitle.textContent = [mine.region, mine.country].filter(Boolean).join(", ");
-    card.appendChild(subtitle);
+    subtitle.textContent = [mine.region, mine.country].filter(Boolean).join(" · ");
+    headingGroup.appendChild(subtitle);
+    const status = document.createElement("span");
+    status.className = "mine-card-status";
+    status.textContent = mine.status || "Статус не вказано";
+    header.append(headingGroup, status);
+    card.appendChild(header);
 
+    const tabs = document.createElement("div");
+    tabs.className = "mine-card-tabs";
+    tabs.setAttribute("role", "tablist");
+    tabs.setAttribute("aria-label", "Розділи картки об’єкта");
+    const content = document.createElement("div");
+    content.className = "mine-card-content";
+
+    const overview = document.createElement("div");
+    overview.className = "mine-card-panel";
+    overview.dataset.panel = "overview";
     const fields = [
-      ["Власник", mine.owner],
-      ["Поточний стан", mine.status],
-      ["Процес", mine.process],
       ["Тип родовища", mine.depositType],
       ["Тип руди", mine.oreType],
+      ["Процес", mine.process],
       ["Інші метали", Array.isArray(mine.otherMetals) ? mine.otherMetals.join(", ") : mine.otherMetals],
-      ["Координати", Number(mine.coordinates.latitude).toFixed(6) + " " + Number(mine.coordinates.longitude).toFixed(6)]
+      ["Координати", mine.coordinates ? Number(mine.coordinates.latitude).toFixed(6) + ", " + Number(mine.coordinates.longitude).toFixed(6) : ""]
     ];
-
-    const table = document.createElement("dl");
-    table.className = "mine-card-fields";
+    const fieldGrid = document.createElement("dl");
+    fieldGrid.className = "mine-card-grid";
     fields.forEach(([label, value]) => {
       if (value === undefined || value === null || value === "") return;
-      const row = document.createElement("div");
-      row.className = "mine-card-row";
+      const item = document.createElement("div");
+      item.className = "mine-card-data-item";
       const term = document.createElement("dt");
       term.textContent = label;
       const detail = document.createElement("dd");
       detail.textContent = String(value);
-      row.append(term, detail);
-      table.appendChild(row);
+      item.append(term, detail);
+      fieldGrid.appendChild(item);
     });
-    card.appendChild(table);
+    overview.appendChild(fieldGrid);
+
+    const production = document.createElement("div");
+    production.className = "mine-card-panel";
+    production.dataset.panel = "production";
+    const productionTitle = document.createElement("h4");
+    productionTitle.className = "mine-card-section-title";
+    productionTitle.textContent = "Виробництво міді";
+    production.appendChild(productionTitle);
+    const productionNote = document.createElement("p");
+    productionNote.className = "mine-card-note";
+    productionNote.textContent = "Історичні річні показники, потужності та прогноз можна додати окремим набором даних. Перевірені числові дані ще не підключено.";
+    production.appendChild(productionNote);
+
+    const logistics = document.createElement("div");
+    logistics.className = "mine-card-panel";
+    logistics.dataset.panel = "logistics";
+    const logisticsTitle = document.createElement("h4");
+    logisticsTitle.className = "mine-card-section-title";
+    logisticsTitle.textContent = "Ланцюг постачання";
+    logistics.appendChild(logisticsTitle);
+    const stages = [
+      ["01", "Видобуток", "Руда з шахти"],
+      ["02", "Збагачення", "Концентрат або підготовка до SX-EW"],
+      ["03", "Переробка", "Плавлення й рафінування або отримання катодів"],
+      ["04", "Наступний споживач", "Завод, виробник чи торговельний партнер"]
+    ];
+    const route = document.createElement("ol");
+    route.className = "mine-card-route";
+    stages.forEach(([number, name, detail]) => {
+      const item = document.createElement("li");
+      const numberEl = document.createElement("span");
+      numberEl.className = "mine-card-route-number";
+      numberEl.textContent = number;
+      const textWrap = document.createElement("div");
+      const nameEl = document.createElement("strong");
+      nameEl.textContent = name;
+      const detailEl = document.createElement("span");
+      detailEl.textContent = detail;
+      textWrap.append(nameEl, detailEl);
+      item.append(numberEl, textWrap);
+      route.appendChild(item);
+    });
+    logistics.appendChild(route);
+    const logisticsNote = document.createElement("p");
+    logisticsNote.className = "mine-card-note";
+    logisticsNote.textContent = "Схема показує можливі етапи галузевого ланцюга, а не підтверджений маршрут саме цього об’єкта.";
+    logistics.appendChild(logisticsNote);
+
+    const owners = document.createElement("div");
+    owners.className = "mine-card-panel";
+    owners.dataset.panel = "owners";
+    const ownersTitle = document.createElement("h4");
+    ownersTitle.className = "mine-card-section-title";
+    ownersTitle.textContent = "Власники та частки";
+    owners.appendChild(ownersTitle);
+    const ownerValue = document.createElement("p");
+    ownerValue.className = "mine-card-owner-value";
+    ownerValue.textContent = mine.owner || "Інформацію про власників не додано.";
+    owners.appendChild(ownerValue);
+    const ownersNote = document.createElement("p");
+    ownersNote.className = "mine-card-note";
+    ownersNote.textContent = "За потреби власників можна буде рознести на окремі записи з частками, датами та джерелами.";
+    owners.appendChild(ownersNote);
+
+    const panels = { overview, production, logistics, owners };
+    const tabLabels = [
+      ["overview", "Огляд"],
+      ["production", "Виробництво"],
+      ["logistics", "Логістика"],
+      ["owners", "Власники"]
+    ];
+    function showTab(name) {
+      Object.entries(panels).forEach(([key, panel]) => { panel.hidden = key !== name; });
+      Array.from(tabs.children).forEach((button) => {
+        const active = button.dataset.tab === name;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-selected", String(active));
+        button.tabIndex = active ? 0 : -1;
+      });
+    }
+    tabLabels.forEach(([name, label]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "mine-card-tab";
+      button.dataset.tab = name;
+      button.setAttribute("role", "tab");
+      button.setAttribute("aria-selected", "false");
+      button.tabIndex = -1;
+      button.textContent = label;
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showTab(name);
+      });
+      tabs.appendChild(button);
+    });
+    content.append(overview, production, logistics, owners);
+    card.append(tabs, content);
 
     const editButton = document.createElement("button");
     editButton.type = "button";
@@ -189,19 +302,18 @@
       if (!mineMarker) return;
       const form = document.createElement("form");
       form.className = "mine-edit-form";
-      const fields = [
+      const editFields = [
         ["name", "Назва"], ["country", "Країна"], ["region", "Регіон"],
         ["owner", "Власник"], ["status", "Поточний стан"], ["process", "Процес"],
         ["depositType", "Тип родовища"], ["oreType", "Тип руди"],
-        ["otherMetals", "Інші метали (через кому)"],
-        ["latitude", "Широта"], ["longitude", "Довгота"]
+        ["otherMetals", "Інші метали (через кому)"], ["latitude", "Широта"], ["longitude", "Довгота"]
       ];
       const inputs = {};
-      const heading = document.createElement("h3");
-      heading.className = "mine-card-title";
-      heading.textContent = "Редагування: " + mine.name;
-      form.appendChild(heading);
-      fields.forEach(([key, fieldLabel]) => {
+      const editHeading = document.createElement("h3");
+      editHeading.className = "mine-card-title";
+      editHeading.textContent = "Редагування: " + mine.name;
+      form.appendChild(editHeading);
+      editFields.forEach(([key, fieldLabel]) => {
         const label = document.createElement("label");
         label.className = "place-search-field";
         label.textContent = fieldLabel;
@@ -233,26 +345,21 @@
       cancel.type = "button";
       cancel.className = "mine-edit-cancel";
       cancel.textContent = "Скасувати";
-      cancel.addEventListener("click", () => {
-        mineMarker.setPopupContent(createMinePopup(mine));
-        mineMarker.openPopup();
-      });
+      cancel.addEventListener("click", () => { mineMarker.setPopupContent(createMinePopup(mine)); mineMarker.openPopup(); });
       form.appendChild(cancel);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         const latitude = Number(inputs.latitude.value);
         const longitude = Number(inputs.longitude.value);
-        if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
-            !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+        if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
           message.textContent = "Перевірте координати: широта від −90 до 90, довгота від −180 до 180.";
           return;
         }
         Object.assign(mine, {
-          name: inputs.name.value.trim(), country: inputs.country.value.trim(),
-          region: inputs.region.value.trim(), owner: inputs.owner.value.trim(),
-          status: inputs.status.value.trim(), process: inputs.process.value.trim(),
+          name: inputs.name.value.trim(), country: inputs.country.value.trim(), region: inputs.region.value.trim(),
+          owner: inputs.owner.value.trim(), status: inputs.status.value.trim(), process: inputs.process.value.trim(),
           depositType: inputs.depositType.value.trim(), oreType: inputs.oreType.value.trim(),
-          otherMetals: inputs.otherMetals.value.split(",").map((v) => v.trim()).filter(Boolean),
+          otherMetals: inputs.otherMetals.value.split(",").map((value) => value.trim()).filter(Boolean),
           coordinates: { latitude, longitude }
         });
         mineMarker.setLatLng([latitude, longitude]);
@@ -267,6 +374,7 @@
     if (associatedMarker && markers.includes(associatedMarker.marker)) {
       addMarkerLockControl(card, associatedMarker.marker, mine.name, () => createMinePopup(mine));
     }
+    showTab("overview");
     return card;
   }
 
