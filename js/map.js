@@ -181,7 +181,9 @@
     editButton.type = "button";
     editButton.className = "mine-edit-button";
     editButton.textContent = "Редагувати картку";
-    editButton.addEventListener("click", () => {
+    editButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
       const mineMarker = mineEntry ? mineEntry.marker : null;
       if (!mineMarker) return;
@@ -258,6 +260,7 @@
         mineMarker.openPopup();
       });
       mineMarker.setPopupContent(form);
+      mineMarker.openPopup();
     });
     card.appendChild(editButton);
     const associatedMarker = mineMarkers.find((item) => item.data.id === mine.id);
