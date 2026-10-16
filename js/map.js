@@ -487,6 +487,7 @@
       alt: mine.name || "Мідна шахта"
     }).addTo(map);
     marker.bindPopup(createMinePopup(mine), {
+      className: "mine-leaflet-popup",
       maxWidth: 340,
       minWidth: 260,
       maxHeight: Math.max(180, window.innerHeight - 80),
