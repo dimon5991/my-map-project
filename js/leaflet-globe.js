@@ -141,11 +141,11 @@
 
     // Використовуємо ті самі XYZ-тайли OpenStreetMap, що й стандартний режим Leaflet.
     // Перепроєктовуємо Web Mercator на equirectangular UV-текстуру для сфери.
-    const z = 2;
+    const z = 3;
     const n = 2 ** z;
     const tileSize = 256;
     const destinationTileWidth = canvas.width / n;
-    const sourceRowsPerSlice = 4;
+    const sourceRowsPerSlice = 2;
     const loadTile = (x, y) => new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -294,13 +294,15 @@
       scene.background = new THREE.Color(0x071522);
       camera = new THREE.PerspectiveCamera(38, (stage.clientWidth || window.innerWidth) / (stage.clientHeight || window.innerHeight), 0.1, 100);
       camera.position.set(0, 0, 12.6);
-      scene.add(new THREE.AmbientLight(0xffffff, 1.45));
-      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+      scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+      // Картографічні тайли вже містять власні кольори; прибираємо сильне освітлення,
+      // яке пересвічувало материки та змінювало колір океану.
+      const key = new THREE.DirectionalLight(0xffffff, 0.25);
       key.position.set(6, 4, 8); scene.add(key);
       group = new THREE.Group(); scene.add(group);
       raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 128, 96),
-        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92, metalness: 0.0 }));
+        new THREE.MeshBasicMaterial({ color: 0xffffff }));
       earth = sphere; group.add(earth);
       drawLeafletTileTexture()
         .then(texture => {
