@@ -284,6 +284,8 @@
         event.preventDefault();
         event.stopPropagation();
         showTab(name);
+        if (name === "owners") showOwnershipConnection(mine);
+        else clearOwnershipConnection();
       });
       tabs.appendChild(button);
     });
@@ -417,6 +419,59 @@
     });
     mineMarkers.push({ data: mine, marker });
   });
+
+  // BHP corporate owner point requested by the user (Melbourne coordinates).
+  const bhpCoordinates = [-37.815158, 144.968108];
+  const bhpIcon = L.divIcon({
+    className: "bhp-owner-icon-wrap",
+    html: '<span class="bhp-owner-icon">BHP</span>',
+    iconSize: [46, 30],
+    iconAnchor: [23, 15]
+  });
+  const bhpOwnerMarker = L.marker(bhpCoordinates, {
+    title: "BHP Group — корпоративний офіс",
+    alt: "BHP Group"
+  }).addTo(map);
+  bhpOwnerMarker.setIcon(bhpIcon);
+  const bhpPopup = document.createElement("section");
+  bhpPopup.className = "bhp-owner-popup";
+  const bhpTitle = document.createElement("h3");
+  bhpTitle.textContent = "BHP Group";
+  const bhpDescription = document.createElement("p");
+  bhpDescription.textContent = "Власник частки Escondida · корпоративна локація";
+  const bhpLocation = document.createElement("p");
+  bhpLocation.textContent = "Мельбурн, Австралія";
+  const bhpCoords = document.createElement("small");
+  bhpCoords.textContent = "-37.815158, 144.968108";
+  bhpPopup.append(bhpTitle, bhpDescription, bhpLocation, bhpCoords);
+  bhpOwnerMarker.bindPopup(bhpPopup, { maxWidth: 260 });
+
+  let activeOwnershipLine = null;
+  function clearOwnershipConnection() {
+    if (activeOwnershipLine && map.hasLayer(activeOwnershipLine)) map.removeLayer(activeOwnershipLine);
+    activeOwnershipLine = null;
+  }
+
+  function showOwnershipConnection(mine) {
+    clearOwnershipConnection();
+    if (!mine || !/\\bBHP\\b/i.test(mine.owner || "")) return;
+    const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
+    if (!mineEntry) return;
+    const from = mineEntry.marker.getLatLng();
+    const to = bhpOwnerMarker.getLatLng();
+    activeOwnershipLine = L.polyline([from, to], {
+      className: "ownership-link-line",
+      color: "#65d8ff",
+      weight: 4,
+      opacity: 0.95,
+      dashArray: "10 12",
+      lineCap: "round",
+      interactive: false
+    }).addTo(map);
+    activeOwnershipLine.bringToFront();
+  }
+
+  map.on("popupclose", clearOwnershipConnection);
 
   let markerToolEnabled = false;
 
