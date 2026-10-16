@@ -663,3 +663,43 @@ html, body, .map-page {
   .mine-card-tab { font-size: 10px; }
   .mine-card-data-item { padding: 7px; }
 }
+
+
+/* Власник BHP та анімований зв'язок із шахтою */
+.bhp-owner-icon-wrap {
+  background: transparent;
+  border: 0;
+}
+.bhp-owner-icon {
+  display: grid;
+  width: 46px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .85);
+  border-radius: 8px;
+  background: #e3f5eb;
+  color: #145c43;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .32);
+  font: 800 13px/1 system-ui, sans-serif;
+  letter-spacing: .5px;
+}
+.bhp-owner-popup {
+  min-width: 190px;
+  color: #17212b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.bhp-owner-popup h3 { margin: 0 0 7px; font-size: 17px; }
+.bhp-owner-popup p { margin: 5px 0; }
+.bhp-owner-popup small { color: #64748b; }
+.ownership-link-line {
+  stroke-dasharray: 10 12;
+  animation: ownership-line-flow 0.8s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(101, 216, 255, .85));
+}
+@keyframes ownership-line-flow {
+  to { stroke-dashoffset: -44; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ownership-link-line { animation: none; }
+}
