@@ -131,6 +131,54 @@
     return texture;
   }
 
+  async function drawLeafletTileTexture() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 2048;
+    canvas.height = 1024;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    ctx.fillStyle = "#17364a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Використовуємо ті самі XYZ-тайли OpenStreetMap, що й стандартний режим Leaflet.
+    // Перепроєктовуємо Web Mercator на equirectangular UV-текстуру для сфери.
+    const z = 2;
+    const n = 2 ** z;
+    const tileSize = 256;
+    const destinationTileWidth = canvas.width / n;
+    const sourceRowsPerSlice = 4;
+    const loadTile = (x, y) => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve({ x, y, img });
+      img.onerror = () => reject(new Error("Не вдалося завантажити картографічний тайл OSM"));
+      img.src = "https://tile.openstreetmap.org/" + z + "/" + x + "/" + y + ".png";
+    });
+    const tiles = await Promise.all(Array.from({ length: n * n }, (_, i) =>
+      loadTile(i % n, Math.floor(i / n))));
+    const mercatorYToLat = pixelY => {
+      const v = 1 - 2 * pixelY / (tileSize * n);
+      return Math.atan(Math.sinh(Math.PI * v)) * 180 / Math.PI;
+    };
+    tiles.forEach(({ x, y, img }) => {
+      for (let sy = 0; sy < tileSize; sy += sourceRowsPerSlice) {
+        const sh = Math.min(sourceRowsPerSlice, tileSize - sy);
+        const globalTop = y * tileSize + sy;
+        const globalBottom = globalTop + sh;
+        const latTop = mercatorYToLat(globalTop);
+        const latBottom = mercatorYToLat(globalBottom);
+        const dy = (90 - latTop) / 180 * canvas.height;
+        const dh = Math.max(1, (latTop - latBottom) / 180 * canvas.height);
+        ctx.drawImage(img, 0, sy, tileSize, sh,
+          x * destinationTileWidth, dy, destinationTileWidth, dh);
+      }
+    });
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    texture.needsUpdate = true;
+    return texture;
+  }
+
   function getPoints() {
     const mines = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).filter(m =>
       m && m.coordinates && Number.isFinite(Number(m.coordinates.latitude)) &&
@@ -253,22 +301,21 @@
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 128, 96),
         new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92, metalness: 0.0 }));
       earth = sphere; group.add(earth);
-      fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
-        .then(response => { if (!response.ok) throw new Error("GeoJSON HTTP " + response.status); return response.json(); })
-        .then(geojson => {
-          if (!active && !started) return;
-          globeTexture = drawCartographicTexture(geojson);
+      drawLeafletTileTexture()
+        .then(texture => {
+          globeTexture = texture;
           earth.material.map = globeTexture;
           earth.material.needsUpdate = true;
           addPointsAndRoutes();
-          setStatus("Картографічний глобус готовий. Перетягуйте Землю мишкою, колесом змінюйте масштаб.");
+          setStatus("Глобус завантажив тайли OpenStreetMap, як у режимі Leaflet. Обертайте мишкою, масштабуйте коліщатком.");
         })
         .catch(error => {
-          console.warn("Не вдалося завантажити межі країн:", error);
+          console.warn("Не вдалося завантажити тайли карти для глобуса:", error);
           globeTexture = drawCartographicTexture(null);
-          earth.material.map = globeTexture; earth.material.needsUpdate = true;
+          earth.material.map = globeTexture;
+          earth.material.needsUpdate = true;
           addPointsAndRoutes();
-          setStatus("Глобус запущено зі спрощеною картою. Межі країн тимчасово недоступні.");
+          setStatus("Тайли Leaflet недоступні; показано резервну карту. Перевірте інтернет або обмеження джерела.");
         });
 
       renderer.domElement.addEventListener("pointerdown", event => {
