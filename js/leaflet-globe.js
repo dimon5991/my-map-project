@@ -223,7 +223,7 @@
       return;
     }
     if (!window.THREE) {
-      failed = true; setStatus("Не завантажився рушій 3D. Перевірте інтернет і оновіть сторінку."); return;
+      setStatus("Завантажується рушій 3D…"); return;
     }
     started = true;
     try {
@@ -244,9 +244,6 @@
       const sphere = new THREE.Mesh(new THREE.SphereGeometry(5, 128, 96),
         new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92, metalness: 0.0 }));
       earth = sphere; group.add(earth);
-      const loader = new THREE.TextureLoader();
-      loader.load("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson",
-        () => {}, undefined, () => {});
       fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
         .then(response => { if (!response.ok) throw new Error("GeoJSON HTTP " + response.status); return response.json(); })
         .then(geojson => {
