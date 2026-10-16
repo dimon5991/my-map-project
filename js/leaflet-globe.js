@@ -151,7 +151,7 @@
       img.crossOrigin = "anonymous";
       img.onload = () => resolve({ x, y, img });
       img.onerror = () => reject(new Error("Не вдалося завантажити картографічний тайл OSM"));
-      img.src = "https://tile.openstreetmap.org/" + z + "/" + x + "/" + y + ".png";
+      img.src = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/" + z + "/" + y + "/" + x;
     });
     const tiles = await Promise.all(Array.from({ length: n * n }, (_, i) =>
       loadTile(i % n, Math.floor(i / n))));
@@ -173,7 +173,8 @@
       }
     });
     const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
+    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    else if ("encoding" in texture && THREE.sRGBEncoding) texture.encoding = THREE.sRGBEncoding;
     texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
     texture.needsUpdate = true;
     return texture;
@@ -307,7 +308,7 @@
           earth.material.map = globeTexture;
           earth.material.needsUpdate = true;
           addPointsAndRoutes();
-          setStatus("Глобус завантажив тайли OpenStreetMap, як у режимі Leaflet. Обертайте мишкою, масштабуйте коліщатком.");
+          setStatus("Картографічні тайли завантажено на сферу. Обертайте мишкою, масштабуйте коліщатком.");
         })
         .catch(error => {
           console.warn("Не вдалося завантажити тайли карти для глобуса:", error);
@@ -315,7 +316,7 @@
           earth.material.map = globeTexture;
           earth.material.needsUpdate = true;
           addPointsAndRoutes();
-          setStatus("Тайли Leaflet недоступні; показано резервну карту. Перевірте інтернет або обмеження джерела.");
+          setStatus("Не вдалося завантажити картографічні тайли. Показано резервну карту.");
         });
 
       renderer.domElement.addEventListener("pointerdown", event => {
