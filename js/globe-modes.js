@@ -318,6 +318,7 @@
   cesiumCss.rel = "stylesheet";
   cesiumCss.href = "https://cesium.com/downloads/cesiumjs/releases/1.125/Build/Cesium/Widgets/widgets.css";
   document.head.appendChild(cesiumCss);
+  window.CESIUM_BASE_URL = "https://cesium.com/downloads/cesiumjs/releases/1.125/Build/Cesium/";
   const cesiumScript = document.createElement("script");
   cesiumScript.src = "https://cesium.com/downloads/cesiumjs/releases/1.125/Build/Cesium/Cesium.js";
   cesiumScript.async = true;
