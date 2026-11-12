@@ -444,4 +444,105 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     ],
     notes: "Координати 49°53′26″ N, 74°16′34″ W за довідником Mindat; це точка історичної шахти."
   }
+,
+  {
+    id: "canada-izok-lake",
+    name: "Izok Lake",
+    country: "Канада",
+    region: "Nunavut",
+    owner: "MMG Resources Inc. (100%); група MMG Limited",
+    status: "Проєкт / геологорозвідка та інфраструктурне оцінювання",
+    process: "Проєктна флотація мідного, цинкового та свинцевого концентратів",
+    depositType: "Підземне (проєкт)",
+    oreType: "Вулканогенне масивне сульфідне (VMS), Cu-Zn-Pb",
+    otherMetals: ["Zn", "Pb", "Ag", "Au"],
+    coordinates: { latitude: 65.641667, longitude: -112.824167 },
+    geometry: null,
+    productionMetrics: [
+      {
+        label: "Іndicated mineral resources — мідь",
+        value: 13,
+        unit: "млн т руди; 2,4% Cu",
+        year: "30.06.2025",
+        source: "https://www.mmg.com/wp-content/uploads/2025/11/Public-Report-of-Exploration-Results-for-Izok.pdf",
+        sourceTitle: "MMG — Izok Corridor Exploration Report 2025"
+      },
+      {
+        label: "Inferred mineral resources — мідь",
+        value: 1.2,
+        unit: "млн т руди; 1,5% Cu",
+        year: "30.06.2025",
+        source: "https://minedocs.com/32/MMG-MRMR-06302025.pdf",
+        sourceTitle: "MMG — Mineral Resources and Ore Reserves Statement 2025"
+      }
+    ],
+    productionNote: "Izok Lake — поліміталічне VMS-родовище зі значним вмістом як міді, так і цинку. За звітом MMG на 30 червня 2025 року: 13 млн т Indicated із 2,4% Cu та 1,2 млн т Inferred із 1,5% Cu. Це ресурси, а не запаси чи фактичний видобуток. Розвиток проєкту залежить, зокрема, від транспортної інфраструктури Izok Corridor.",
+    sources: [
+      { title: "MMG — 2025 Mineral Resources and Ore Reserves Statement", url: "https://minedocs.com/32/MMG-MRMR-06302025.pdf" },
+      { title: "Government of Canada — Izok Corridor: власник, товари й географія", url: "https://publications.gc.ca/collections/collection_2026/rcaanc-cirnac/R71-39-2025-eng.pdf" },
+      { title: "Government of Nunavut — lease location and coordinates, Izok Lake", url: "https://www.gov.nu.ca/sites/default/files/documents/2024-02/Nunavut%20Lands%20and%20Resources%20Devolution%20Agreement%20-%20INUK.pdf" }
+    ],
+    notes: "Координати 65°38′30″ N, 112°49′27″ W — розташування табору/ділянки Izok Lake у документі уряду Nunavut."
+  },
+  {
+    id: "canada-lalor",
+    name: "Lalor",
+    country: "Канада",
+    region: "Manitoba",
+    owner: "Hudbay Minerals Inc. (100%)",
+    status: "Видобуток",
+    process: "Підземне видобування; збагачення на комплексі Snow Lake з отриманням мідьвмісного та цинкового концентратів і золота",
+    depositType: "Підземне",
+    oreType: "Вулканогенне масивне сульфідне (VMS), Au-Zn-Cu-Ag",
+    otherMetals: ["Au", "Zn", "Ag"],
+    coordinates: { latitude: 54.873333, longitude: -100.150278 },
+    geometry: null,
+    productionMetrics: [
+      {
+        label: "Виробництво міді на операціях Snow Lake (не окремо Lalor)",
+        value: 9249,
+        unit: "т Cu у концентраті та doré",
+        year: 2025,
+        source: "https://www.hudbay.com/canada/default.aspx",
+        sourceTitle: "Hudbay — Snow Lake 2025 Performance"
+      },
+      {
+        label: "Планове виробництво міді на операціях Snow Lake",
+        value: "10 000–13 000",
+        unit: "т Cu",
+        year: 2026,
+        source: "https://www.hudbay.com/canada/default.aspx",
+        sourceTitle: "Hudbay — Snow Lake 2026 Guidance"
+      }
+    ],
+    productionNote: "Показники 9 249 т за 2025 рік і guidance 10 000–13 000 т на 2026 рік стосуються операцій Hudbay у Snow Lake загалом, а не окремо шахти Lalor. Lalor є діючою підземною золото-цинково-мідно-срібною шахтою; окремий видобуток міді лише для Lalor у відкритому підсумку компанії не деталізований.",
+    sources: [
+      { title: "Hudbay — Canada Operations: Lalor, 2025 performance and 2026 guidance", url: "https://www.hudbay.com/canada/default.aspx" },
+      { title: "Hudbay — Lalor and Snow Lake Operations, NI 43-101 Technical Report", url: "https://s23.q4cdn.com/405985100/files/doc_downloads/tech_reports/canada/Snow-Lake-and-Lalor-NI-43-101-Technical-Report_FINAL.pdf" }
+    ],
+    notes: "Координати 54°52′24″ N, 100°09′01″ W за технічним звітом Hudbay."
+  },
+  {
+    id: "canada-777",
+    name: "777 (Triple Seven)",
+    country: "Канада",
+    region: "Manitoba",
+    owner: "Hudbay Minerals Inc. (100%)",
+    status: "Закрито у 2022 році; шахту виведено з експлуатації",
+    process: "Історична підземна шахта; мідно-цинкові VMS-концентрати",
+    depositType: "Підземне",
+    oreType: "Мідно-цинкове вулканогенне масивне сульфідне (VMS)",
+    otherMetals: ["Zn", "Au", "Ag"],
+    coordinates: { latitude: 54.775000, longitude: -101.880000 },
+    geometry: null,
+    productionMetrics: [],
+    productionNote: "Рудник 777 видобував мідно-цинкову руду з 2004 року. Hudbay завершила гірничі роботи 17 червня 2022 року після відпрацювання запасів; розпочалися роботи із закриття та виведення об'єкта з експлуатації. Показників після 2022 року немає, оскільки рудник не працює.",
+    sources: [
+      { title: "Hudbay — Completion of Mining Activities at 777, 22.06.2022", url: "https://hudbay.com/investors/press-releases/press-release-details/2022/Hudbay-Announces-Completion-of-Mining-Activities-at-777-after-18-years-of-Steady-Production/default.aspx" },
+      { title: "Hudbay NI 43-101 — 777 Mine: ownership and location", url: "https://www.sec.gov/Archives/edgar/data/1322422/000106299322017538/exhibit99-2.htm" },
+      { title: "Government of Manitoba — mineral inventory record 777", url: "https://gov.mb.ca/iem/min-ed/mbhistory/mininv/1044.htm" }
+    ],
+    notes: "Координати 54°46′30″ N, 101°52′48″ W за технічним звітом NI 43-101 Hudbay."
+  }
+
 ]);
