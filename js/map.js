@@ -199,10 +199,48 @@
     productionTitle.className = "mine-card-section-title";
     productionTitle.textContent = "Виробництво міді";
     production.appendChild(productionTitle);
-    const productionNote = document.createElement("p");
-    productionNote.className = "mine-card-note";
-    productionNote.textContent = "Історичні річні показники, потужності та прогноз можна додати окремим набором даних. Перевірені числові дані ще не підключено.";
-    production.appendChild(productionNote);
+    const productionMetrics = Array.isArray(mine.productionMetrics) ? mine.productionMetrics : [];
+    if (productionMetrics.length) {
+      const metricsGrid = document.createElement("dl");
+      metricsGrid.className = "mine-card-grid";
+      productionMetrics.forEach((metric) => {
+        if (!metric || metric.value === undefined || metric.value === null || metric.value === "") return;
+        const item = document.createElement("div");
+        item.className = "mine-card-data-item";
+        const term = document.createElement("dt");
+        term.textContent = metric.label || "Показник";
+        const detail = document.createElement("dd");
+        const numericValue = Number(metric.value);
+        const formattedValue = metric.value !== "" && Number.isFinite(numericValue)
+          ? new Intl.NumberFormat("uk-UA", { maximumFractionDigits: 2 }).format(numericValue)
+          : String(metric.value);
+        detail.textContent = [formattedValue, metric.unit, metric.year ? "(" + metric.year + ")" : ""]
+          .filter(Boolean).join(" ");
+        item.append(term, detail);
+        if (metric.source) {
+          const sourceLink = document.createElement("a");
+          sourceLink.href = metric.source;
+          sourceLink.target = "_blank";
+          sourceLink.rel = "noopener noreferrer";
+          sourceLink.textContent = metric.sourceTitle || "Джерело";
+          sourceLink.className = "mine-card-source-link";
+          item.appendChild(sourceLink);
+        }
+        metricsGrid.appendChild(item);
+      });
+      production.appendChild(metricsGrid);
+    } else {
+      const productionNote = document.createElement("p");
+      productionNote.className = "mine-card-note";
+      productionNote.textContent = "Перевірені показники виробництва та потужностей для цього об’єкта ще не додано.";
+      production.appendChild(productionNote);
+    }
+    if (mine.productionNote) {
+      const productionNote = document.createElement("p");
+      productionNote.className = "mine-card-note";
+      productionNote.textContent = mine.productionNote;
+      production.appendChild(productionNote);
+    }
 
     const logistics = document.createElement("div");
     logistics.className = "mine-card-panel";
