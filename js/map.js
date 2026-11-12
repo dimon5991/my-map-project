@@ -192,6 +192,35 @@
     });
     overview.appendChild(fieldGrid);
 
+    const sourceRecords = Array.isArray(mine.sources) ? mine.sources : [];
+    if (sourceRecords.length) {
+      const sourcesHeading = document.createElement("h4");
+      sourcesHeading.className = "mine-card-section-title mine-card-sources-heading";
+      sourcesHeading.textContent = "Джерела даних";
+      overview.appendChild(sourcesHeading);
+
+      const sourcesList = document.createElement("ul");
+      sourcesList.className = "mine-card-sources";
+      sourceRecords.forEach((source) => {
+        if (!source || !source.url) return;
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = source.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = source.title || "Відкрити джерело";
+        item.appendChild(link);
+        sourcesList.appendChild(item);
+      });
+      if (sourcesList.children.length) overview.appendChild(sourcesList);
+    }
+    if (mine.notes) {
+      const dataNote = document.createElement("p");
+      dataNote.className = "mine-card-note";
+      dataNote.textContent = mine.notes;
+      overview.appendChild(dataNote);
+    }
+
     const production = document.createElement("div");
     production.className = "mine-card-panel";
     production.dataset.panel = "production";
@@ -229,7 +258,7 @@
         metricsGrid.appendChild(item);
       });
       production.appendChild(metricsGrid);
-    } else {
+    } else if (!mine.productionNote) {
       const productionNote = document.createElement("p");
       productionNote.className = "mine-card-note";
       productionNote.textContent = "Перевірені показники виробництва та потужностей для цього об’єкта ще не додано.";

@@ -808,3 +808,23 @@ html, body, .map-page {
   .leaflet-globe-toolbar { right: 8px; bottom: 8px; max-width: calc(100vw - 16px); }
   .leaflet-globe-card { top: 56px; right: 8px; width: min(310px, calc(100vw - 16px)); }
 }
+
+
+/* Джерела даних у картках мідних об'єктів */
+.mine-card-sources-heading { margin-top: 14px; }
+.mine-card-sources {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0 0 0 16px;
+  color: #c1ced8;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.mine-card-sources a {
+  color: #a9dcff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+.mine-card-sources a:hover { color: #fff; }
