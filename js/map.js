@@ -317,10 +317,65 @@
     ownerValue.className = "mine-card-owner-value";
     ownerValue.textContent = mine.owner || "Інформацію про власників не додано.";
     owners.appendChild(ownerValue);
-    const ownersNote = document.createElement("p");
-    ownersNote.className = "mine-card-note";
-    ownersNote.textContent = "За потреби власників можна буде рознести на окремі записи з частками, датами та джерелами.";
-    owners.appendChild(ownersNote);
+
+    const office = mine.ownerOffice;
+    if (office) {
+      const officeCard = document.createElement("section");
+      officeCard.className = "mine-card-owner-office";
+      const officeHeading = document.createElement("h5");
+      officeHeading.className = "mine-card-owner-office-title";
+      officeHeading.textContent = office.company || "Компанія-власник";
+      const officeType = document.createElement("p");
+      officeType.className = "mine-card-owner-office-type";
+      officeType.textContent = office.type || "Офіс компанії";
+      const officeAddress = document.createElement("p");
+      officeAddress.textContent = office.address || "Адресу не вказано";
+      const officeCity = document.createElement("p");
+      officeCity.textContent = office.city || "";
+      officeCard.append(officeHeading, officeType, officeAddress);
+      if (officeCity.textContent) officeCard.appendChild(officeCity);
+      if (office.note) {
+        const officeNote = document.createElement("p");
+        officeNote.className = "mine-card-note";
+        officeNote.textContent = office.note;
+        officeCard.appendChild(officeNote);
+      }
+      if (office.url) {
+        const officeSource = document.createElement("a");
+        officeSource.href = office.url;
+        officeSource.target = "_blank";
+        officeSource.rel = "noopener noreferrer";
+        officeSource.className = "mine-card-owner-office-source";
+        officeSource.textContent = "Джерело адреси та контактів";
+        officeCard.appendChild(officeSource);
+      }
+      const showOfficeButton = document.createElement("button");
+      showOfficeButton.type = "button";
+      showOfficeButton.className = "mine-card-owner-office-button";
+      showOfficeButton.textContent = "Показати офіс і зв’язок на карті";
+      showOfficeButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        showOwnershipConnection(mine);
+        if (Number.isFinite(office.latitude) && Number.isFinite(office.longitude)) {
+          const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
+          if (mineEntry) {
+            const bounds = L.latLngBounds(
+              mineEntry.marker.getLatLng(),
+              [office.latitude, office.longitude]
+            );
+            map.fitBounds(bounds, { padding: [55, 55], maxZoom: 5 });
+          }
+        }
+      });
+      officeCard.appendChild(showOfficeButton);
+      owners.appendChild(officeCard);
+    } else if (!/\\bBHP\\b/i.test(mine.owner || "")) {
+      const ownersNote = document.createElement("p");
+      ownersNote.className = "mine-card-note";
+      ownersNote.textContent = "Окрему адресу офісу власника та координати для зв’язку на карті не підтверджено.";
+      owners.appendChild(ownersNote);
+    }
 
     const panels = { overview, production, logistics, owners };
     const tabLabels = [
@@ -563,25 +618,34 @@
     const popup = document.createElement("section");
     popup.className = "bhp-owner-popup";
     const title = document.createElement("h3");
-    title.textContent = office.company;
+    title.textContent = office.company || "Компанія-власник";
+    const relationship = document.createElement("p");
+    relationship.textContent = "Власник об’єкта: " + (mine.name || "мідне родовище");
+    const share = document.createElement("p");
+    share.textContent = "Структура власності: " + (mine.owner || "частка не уточнена");
     const type = document.createElement("p");
     type.textContent = office.type || "Офіс власника";
     const address = document.createElement("p");
-    address.textContent = office.address;
+    address.textContent = office.address || "Адресу не вказано";
     const city = document.createElement("p");
     city.textContent = office.city || "";
-    const link = document.createElement("a");
-    link.href = office.url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = "Джерело адреси офісу";
-    popup.append(title, type, address, city, link);
+    const coords = document.createElement("small");
+    coords.textContent = office.latitude.toFixed(6) + ", " + office.longitude.toFixed(6);
+    popup.append(title, relationship, share, type, address, city, coords);
     if (office.note) {
       const note = document.createElement("p");
       note.textContent = office.note;
       popup.appendChild(note);
     }
-    activeOwnerOfficeMarker.bindPopup(popup, { maxWidth: 300 });
+    if (office.url) {
+      const link = document.createElement("a");
+      link.href = office.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.textContent = "Джерело адреси та контактів";
+      popup.appendChild(link);
+    }
+    activeOwnerOfficeMarker.bindPopup(popup, { maxWidth: 320 });
 
     const from = mineEntry.marker.getLatLng();
     const to = activeOwnerOfficeMarker.getLatLng();
