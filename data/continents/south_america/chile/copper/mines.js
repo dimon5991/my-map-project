@@ -26,7 +26,7 @@ window.COPPER_MINES = [
         value: 1345.1,
         unit: "тис. т Cu",
         year: 2025,
-        source: "https://boletin.cochilco.cl/productos/boletin.asp?anio=2026&mes=04&tabla=tabla22",
+        source: "https://boletin.cochilco.cl/productos/boletin.asp?anio=2026&mes=06&tabla=tabla22",
         sourceTitle: "COCHILCO — виробництво міді за компаніями"
       },
       {
@@ -52,9 +52,17 @@ window.COPPER_MINES = [
         year: 2026,
         source: "https://www.bhp.com/news/articles/03/escondida--bhp-submits-environmental-permit-to-build-a-new-concentrator-plant",
         sourceTitle: "BHP — Escondida New Concentrator, 17.03.2026"
+      },
+      {
+        label: "Проєктна потужність нового концентратора (очікується 2031–2032)",
+        value: "220–260",
+        unit: "тис. т міді/рік",
+        year: "2031–2032",
+        source: "https://www.bhp.com/news/articles/03/escondida--bhp-submits-environmental-permit-to-build-a-new-concentrator-plant",
+        sourceTitle: "BHP — проєкт нового концентратора"
       }
     ],
-    productionNote: "Не змішуйте показники: 1 345,1 тис. т — фактичний річний видобуток міді; 422 і 460 тис. т/добу — номінальна та затверджена добова переробка руди; 350 тис. т/рік — номінальна потужність виробництва катодної міді.",
+    productionNote: "Не змішуйте показники: 1 345,1 тис. т — фактичний календарний видобуток міді за 2025 рік; 422 тис. т/добу — номінальна потужність помелу руди; 460 тис. т/добу — затверджена загальна потужність трьох фабрик; 350 тис. т/рік — номінальна потужність катодного цеху. Новий концентратор на 220–260 тис. т міді/рік є проєктом, а не чинною потужністю; BHP вказує можливий початок виробництва у 2031–2032 роках після отримання дозволів.",
     sources: [
       {
         title: "COCHILCO — Anuario de Estadísticas del Cobre y Otros Minerales",
