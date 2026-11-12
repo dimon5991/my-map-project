@@ -64,7 +64,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     ownerOffice: {
   company: "Selkirk Copper Mines Inc.",
   type: "Головний офіс",
-  address: "Suite 2833, 595 Burrard Street, Vancouver, BC V7X 1J1, Canada",
+  address: "Suite 3123, 595 Burrard Street, Vancouver, BC V7X 1J1, Canada",
   city: "Vancouver, Canada",
   latitude: 49.28579,
   longitude: -123.11936,
