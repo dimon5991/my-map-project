@@ -838,3 +838,39 @@ html, body, .map-page {
   color: #bcefff; font: 700 11px/1 Arial, sans-serif;
   box-shadow: 0 0 14px rgba(101,216,255,.35);
 }
+
+
+/* Картка компанії-власника в картці канадського мідного об'єкта */
+.mine-card-owner-office {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid rgba(101, 216, 255, .32);
+  border-radius: 10px;
+  background: rgba(8, 31, 46, .58);
+  color: #e8f5fb;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.mine-card-owner-office p { margin: 0; overflow-wrap: anywhere; }
+.mine-card-owner-office-title {
+  margin: 0;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.3;
+}
+.mine-card-owner-office-type { color: #9fdcf2; font-weight: 700; }
+.mine-card-owner-office-source { color: #a9dcff; text-decoration: underline; text-underline-offset: 2px; }
+.mine-card-owner-office-button {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 8px 10px;
+  border: 1px solid rgba(101, 216, 255, .55);
+  border-radius: 7px;
+  background: rgba(27, 94, 125, .5);
+  color: #f3fbff;
+  cursor: pointer;
+  font: inherit;
+}
+.mine-card-owner-office-button:hover { background: rgba(27, 120, 155, .72); }
