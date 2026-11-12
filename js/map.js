@@ -514,18 +514,77 @@
   bhpOwnerMarker.bindPopup(bhpPopup, { maxWidth: 260 });
 
   let activeOwnershipLine = null;
+  let activeOwnerOfficeMarker = null;
   function clearOwnershipConnection() {
     if (activeOwnershipLine && map.hasLayer(activeOwnershipLine)) map.removeLayer(activeOwnershipLine);
+    if (activeOwnerOfficeMarker && map.hasLayer(activeOwnerOfficeMarker)) map.removeLayer(activeOwnerOfficeMarker);
     activeOwnershipLine = null;
+    activeOwnerOfficeMarker = null;
   }
 
   function showOwnershipConnection(mine) {
     clearOwnershipConnection();
-    if (!mine || !/\bBHP\b/i.test(mine.owner || "")) return;
+    if (!mine) return;
     const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
     if (!mineEntry) return;
+
+    // Escondida retains its existing BHP marker and connection.
+    const office = mine.ownerOffice;
+    if (!office && /\\bBHP\\b/i.test(mine.owner || "")) {
+      const from = mineEntry.marker.getLatLng();
+      const to = bhpOwnerMarker.getLatLng();
+      activeOwnershipLine = L.polyline([from, to], {
+        className: "ownership-link-line",
+        color: "#65d8ff",
+        weight: 4,
+        opacity: 0.95,
+        dashArray: "10 12",
+        lineCap: "round",
+        interactive: false
+      }).addTo(map);
+      activeOwnershipLine.bringToFront();
+      return;
+    }
+    if (!office || !Number.isFinite(office.latitude) || !Number.isFinite(office.longitude)) return;
+
+    const officeLatLng = [office.latitude, office.longitude];
+    const officeIcon = L.divIcon({
+      className: "owner-office-icon-wrap",
+      html: '<span class="owner-office-icon">HQ</span>',
+      iconSize: [42, 30],
+      iconAnchor: [21, 15]
+    });
+    activeOwnerOfficeMarker = L.marker(officeLatLng, {
+      icon: officeIcon,
+      title: office.company + " — " + office.type,
+      alt: "Офіс власника"
+    }).addTo(map);
+
+    const popup = document.createElement("section");
+    popup.className = "bhp-owner-popup";
+    const title = document.createElement("h3");
+    title.textContent = office.company;
+    const type = document.createElement("p");
+    type.textContent = office.type || "Офіс власника";
+    const address = document.createElement("p");
+    address.textContent = office.address;
+    const city = document.createElement("p");
+    city.textContent = office.city || "";
+    const link = document.createElement("a");
+    link.href = office.url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Джерело адреси офісу";
+    popup.append(title, type, address, city, link);
+    if (office.note) {
+      const note = document.createElement("p");
+      note.textContent = office.note;
+      popup.appendChild(note);
+    }
+    activeOwnerOfficeMarker.bindPopup(popup, { maxWidth: 300 });
+
     const from = mineEntry.marker.getLatLng();
-    const to = bhpOwnerMarker.getLatLng();
+    const to = activeOwnerOfficeMarker.getLatLng();
     activeOwnershipLine = L.polyline([from, to], {
       className: "ownership-link-line",
       color: "#65d8ff",

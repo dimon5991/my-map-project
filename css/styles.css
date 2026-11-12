@@ -828,3 +828,13 @@ html, body, .map-page {
   overflow-wrap: anywhere;
 }
 .mine-card-sources a:hover { color: #fff; }
+
+/* Офіси власників мідних об'єктів */
+.owner-office-icon-wrap { background: transparent; border: 0; }
+.owner-office-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 28px; border: 1px solid #9be7ff;
+  border-radius: 7px; background: rgba(9, 35, 52, .94);
+  color: #bcefff; font: 700 11px/1 Arial, sans-serif;
+  box-shadow: 0 0 14px rgba(101,216,255,.35);
+}
