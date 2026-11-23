@@ -874,3 +874,350 @@ html, body, .map-page {
   font: inherit;
 }
 .mine-card-owner-office-button:hover { background: rgba(27, 120, 155, .72); }
+
+
+/* Mine card glass redesign — higher contrast, readable data and motion. */
+.mine-leaflet-popup .leaflet-popup-content-wrapper,
+.mine-leaflet-popup .leaflet-popup-tip {
+  background: linear-gradient(145deg, rgba(10, 27, 41, .91), rgba(18, 39, 54, .86)) !important;
+  color: #f7fbff;
+  border: 1px solid rgba(190, 218, 234, .42);
+  box-shadow: 0 16px 42px rgba(4, 14, 24, .38), inset 0 1px 0 rgba(255,255,255,.12);
+  backdrop-filter: blur(18px) saturate(145%);
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+.mine-leaflet-popup .leaflet-popup-content-wrapper { border-radius: 17px; }
+.mine-leaflet-popup .leaflet-popup-tip { border-radius: 2px; }
+.mine-leaflet-popup .leaflet-popup-close-button {
+  top: 9px !important;
+  right: 10px !important;
+  width: 27px !important;
+  height: 27px !important;
+  border-radius: 8px;
+  background: rgba(255,255,255,.09);
+  color: #f3f8fc !important;
+  font-size: 22px !important;
+  line-height: 25px !important;
+}
+.mine-leaflet-popup .leaflet-popup-close-button:hover {
+  background: rgba(255,255,255,.18);
+  color: #fff !important;
+}
+.mine-card {
+  width: min(350px, calc(100vw - 76px));
+  min-width: 250px;
+  max-width: 350px;
+  color: #f7fbff;
+  font-size: 13px;
+  line-height: 1.5;
+  animation: mine-card-arrive .34s cubic-bezier(.2,.75,.25,1) both;
+}
+.mine-card-header {
+  position: relative;
+  align-items: center;
+  padding: 3px 27px 13px 1px;
+  border-bottom: 1px solid rgba(202, 225, 239, .18);
+}
+.mine-card-title {
+  color: #fff;
+  font-size: 21px;
+  font-weight: 780;
+  letter-spacing: -.35px;
+  text-shadow: 0 1px 12px rgba(0,0,0,.22);
+}
+.mine-card-subtitle {
+  margin-top: 5px;
+  color: #d5e4ee;
+  font-size: 12px;
+  font-weight: 550;
+}
+.mine-card-status {
+  position: relative;
+  max-width: 112px;
+  padding: 5px 9px 5px 17px;
+  border: 1px solid rgba(126, 225, 180, .45);
+  border-radius: 999px;
+  background: rgba(30, 117, 82, .32);
+  color: #d9ffeb;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .12px;
+}
+.mine-card-status::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #7de2aa;
+  box-shadow: 0 0 0 3px rgba(125,226,170,.13);
+  transform: translateY(-50%);
+  animation: mine-status-pulse 2.6s ease-in-out infinite;
+}
+.mine-card-tabs {
+  gap: 4px;
+  margin: 12px 0 13px;
+  padding: 4px;
+  border: 1px solid rgba(185, 214, 232, .22);
+  border-radius: 11px;
+  background: rgba(3, 17, 28, .58);
+  box-shadow: inset 0 1px 5px rgba(0,0,0,.15);
+}
+.mine-card-tab {
+  min-height: 37px;
+  padding: 7px 4px;
+  border-radius: 8px;
+  color: #d4e2ec;
+  font-size: 11px;
+  font-weight: 700;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.mine-card-tab:hover {
+  background: rgba(164, 199, 220, .16);
+  color: #fff;
+  transform: translateY(-1px);
+}
+.mine-card-tab.is-active {
+  background: linear-gradient(135deg, rgba(201, 128, 65, .42), rgba(113, 151, 174, .46));
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 218, 179, .28), 0 3px 10px rgba(0,0,0,.13);
+}
+.mine-card-content { min-height: 130px; }
+.mine-card-panel:not([hidden]) { animation: mine-panel-appear .22s ease-out both; }
+.mine-card-grid { gap: 8px; }
+.mine-card-data-item {
+  padding: 10px;
+  border: 1px solid rgba(193, 218, 235, .23);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(79, 111, 132, .34), rgba(28, 51, 68, .54));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055);
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.mine-card-data-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(240, 184, 126, .5);
+  background: linear-gradient(145deg, rgba(102, 126, 140, .4), rgba(38, 58, 72, .64));
+}
+.mine-card-data-item dt {
+  margin-bottom: 5px;
+  color: #d0dfeb;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .25px;
+}
+.mine-card-data-item dd {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-shadow: 0 1px 5px rgba(0,0,0,.18);
+}
+.mine-card-section-title { color: #fff; font-size: 14px; font-weight: 750; }
+.mine-card-note { color: #d4e1ea; font-size: 11px; line-height: 1.55; }
+.mine-card-sources { color: #d7e5ee; }
+.mine-card-sources a { color: #a8dcff; font-weight: 600; }
+.mine-card-sources a:hover { color: #fff; }
+.mine-card-route { position: relative; gap: 2px; }
+.mine-card-route li { position: relative; gap: 11px; padding: 8px 0; }
+.mine-card-route-number {
+  z-index: 1;
+  flex-basis: 29px;
+  width: 29px;
+  height: 29px;
+  border: 1px solid rgba(238, 180, 120, .62);
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(172, 105, 52, .45), rgba(63, 94, 113, .55));
+  color: #fff1df;
+  box-shadow: 0 3px 10px rgba(0,0,0,.16);
+}
+.mine-card-route strong { color: #fff; font-size: 12px; }
+.mine-card-route li span:last-child { color: #d0dee8; font-size: 11px; }
+.mine-card-owner-value {
+  border-color: rgba(193, 218, 235, .24);
+  background: rgba(49, 75, 92, .54);
+  color: #fff;
+  line-height: 1.55;
+}
+.mine-card-owner-office {
+  margin-top: 10px;
+  padding: 11px;
+  border: 1px solid rgba(193,218,235,.22);
+  border-radius: 10px;
+  background: rgba(38,62,78,.58);
+  color: #f7fbff;
+}
+.mine-card-owner-office-title { color: #fff; font-size: 13px; }
+.mine-card-owner-office p { color: #d5e3ec; }
+.mine-card-owner-office-source { color: #a8dcff; }
+.mine-card-insights {
+  margin-top: 11px;
+  padding: 11px;
+  border: 1px solid rgba(205, 221, 233, .22);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(5, 19, 30, .55), rgba(57, 77, 91, .42));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+.mine-card-insights-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.mine-card-insights-heading h4 {
+  margin: 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 780;
+}
+.mine-card-insights-heading span {
+  color: #c3d2de;
+  font-size: 9px;
+  text-align: right;
+}
+.mine-card-completion-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(207, 226, 239, .14);
+}
+.mine-card-gauge {
+  position: relative;
+  display: grid;
+  flex: 0 0 54px;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(from -90deg, #e4a36b 0 var(--completion), rgba(207,225,238,.19) var(--completion) 100%);
+  box-shadow: 0 0 18px rgba(220, 148, 83, .12);
+}
+.mine-card-gauge::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: #172c3b;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,.28);
+}
+.mine-card-gauge-value {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.mine-card-completion-copy { display: grid; gap: 3px; min-width: 0; }
+.mine-card-completion-copy strong { color: #fff; font-size: 12px; }
+.mine-card-completion-copy span { color: #cbd9e3; font-size: 10px; line-height: 1.35; }
+.mine-card-coverage-list { display: grid; gap: 7px; margin-top: 10px; }
+.mine-card-coverage-item {
+  display: grid;
+  grid-template-columns: minmax(95px, 1fr) minmax(56px, .8fr) 16px;
+  align-items: center;
+  gap: 8px;
+  color: #dbe7ef;
+  font-size: 10px;
+}
+.mine-card-coverage-track {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(204, 222, 235, .16);
+}
+.mine-card-coverage-fill {
+  display: block;
+  width: var(--bar-value);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ba7445, #f0bd83);
+  box-shadow: 0 0 9px rgba(237, 172, 111, .3);
+  transition: width .7s cubic-bezier(.2,.7,.2,1);
+}
+.mine-card-coverage-fill.is-filled { min-width: 4px; }
+.mine-card-coverage-state { color: #b9c9d5; text-align: right; font-weight: 700; }
+.mine-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 9px;
+}
+.mine-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 36px;
+  padding: 7px 8px;
+  border: 1px solid rgba(203, 222, 235, .28);
+  border-radius: 8px;
+  background: rgba(34, 60, 77, .68);
+  color: #f4f9fc;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 750;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.mine-card-action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(236, 178, 122, .6);
+  background: rgba(111, 82, 58, .62);
+  color: #fff;
+}
+.mine-card-action:focus-visible {
+  outline: 2px solid #f0bd83;
+  outline-offset: 2px;
+}
+.mine-card .mine-edit-button,
+.mine-card .marker-lock-button {
+  min-height: 38px;
+  border: 1px solid rgba(199, 220, 234, .25);
+  border-radius: 8px;
+  background: linear-gradient(135deg, #a96335, #85512f);
+  color: #fff;
+  box-shadow: 0 4px 13px rgba(0,0,0,.2);
+}
+.mine-card .mine-edit-button:hover,
+.mine-card .marker-lock-button:hover { background: linear-gradient(135deg, #c17a48, #98623d); }
+@keyframes mine-card-arrive {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes mine-panel-appear {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes mine-status-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(125,226,170,.12); }
+  50% { box-shadow: 0 0 0 5px rgba(125,226,170,.04); }
+}
+@media (max-width: 520px) {
+  .mine-card {
+    width: min(310px, calc(100vw - 76px));
+    min-width: 235px;
+  }
+  .mine-card-data-item { padding: 8px; }
+  .mine-card-coverage-item { grid-template-columns: minmax(84px, 1fr) minmax(45px, .8fr) 14px; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mine-card,
+  .mine-card-panel:not([hidden]),
+  .mine-card-status::before {
+    animation: none !important;
+  }
+  .mine-card-data-item,
+  .mine-card-tab,
+  .mine-card-action,
+  .mine-card-coverage-fill {
+    transition: none !important;
+  }
+}
