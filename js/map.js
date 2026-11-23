@@ -192,6 +192,123 @@
     });
     overview.appendChild(fieldGrid);
 
+    // Mine card visual profile and practical coordinate actions.
+    const hasCoordinates = Boolean(mine.coordinates &&
+      Number.isFinite(Number(mine.coordinates.latitude)) &&
+      Number.isFinite(Number(mine.coordinates.longitude)) &&
+      Number(mine.coordinates.latitude) >= -90 && Number(mine.coordinates.latitude) <= 90 &&
+      Number(mine.coordinates.longitude) >= -180 && Number(mine.coordinates.longitude) <= 180);
+    const profileChecks = [
+      ["Власник", Boolean(mine.owner)],
+      ["Статус", Boolean(mine.status)],
+      ["Технологія", Boolean(mine.process)],
+      ["Тип руди / родовища", Boolean(mine.oreType || mine.depositType)],
+      ["Координати", hasCoordinates],
+      ["Виробничі показники", Array.isArray(mine.productionMetrics) && mine.productionMetrics.length > 0]
+    ];
+    const completedChecks = profileChecks.filter(([, isPresent]) => isPresent).length;
+    const completion = Math.round(completedChecks / profileChecks.length * 100);
+    const insights = document.createElement("section");
+    insights.className = "mine-card-insights";
+    const insightsHeading = document.createElement("div");
+    insightsHeading.className = "mine-card-insights-heading";
+    const insightsTitle = document.createElement("h4");
+    insightsTitle.textContent = "Паспорт об’єкта";
+    const insightsCaption = document.createElement("span");
+    insightsCaption.textContent = "якість заповнення даних";
+    insightsHeading.append(insightsTitle, insightsCaption);
+    insights.appendChild(insightsHeading);
+
+    const completionRow = document.createElement("div");
+    completionRow.className = "mine-card-completion-row";
+    const gauge = document.createElement("div");
+    gauge.className = "mine-card-gauge";
+    gauge.style.setProperty("--completion", completion + "%");
+    gauge.setAttribute("role", "img");
+    gauge.setAttribute("aria-label", "Заповнено " + completion + " відсотків ключових полів");
+    const gaugeValue = document.createElement("span");
+    gaugeValue.className = "mine-card-gauge-value";
+    gaugeValue.textContent = completion + "%";
+    gauge.appendChild(gaugeValue);
+    const completionCopy = document.createElement("div");
+    completionCopy.className = "mine-card-completion-copy";
+    const completionStrong = document.createElement("strong");
+    completionStrong.textContent = completedChecks + " із " + profileChecks.length + " полів заповнено";
+    const completionNote = document.createElement("span");
+    completionNote.textContent = "Це повнота картки, а не показник видобутку.";
+    completionCopy.append(completionStrong, completionNote);
+    completionRow.append(gauge, completionCopy);
+    insights.appendChild(completionRow);
+
+    const coverageList = document.createElement("div");
+    coverageList.className = "mine-card-coverage-list";
+    profileChecks.forEach(([label, isPresent]) => {
+      const row = document.createElement("div");
+      row.className = "mine-card-coverage-item";
+      const rowLabel = document.createElement("span");
+      rowLabel.textContent = label;
+      const track = document.createElement("span");
+      track.className = "mine-card-coverage-track";
+      const fill = document.createElement("span");
+      fill.className = "mine-card-coverage-fill" + (isPresent ? " is-filled" : "");
+      fill.style.setProperty("--bar-value", isPresent ? "100%" : "0%");
+      track.appendChild(fill);
+      const state = document.createElement("span");
+      state.className = "mine-card-coverage-state";
+      state.textContent = isPresent ? "Є" : "—";
+      row.append(rowLabel, track, state);
+      coverageList.appendChild(row);
+    });
+    insights.appendChild(coverageList);
+    overview.appendChild(insights);
+
+    if (hasCoordinates) {
+      const latitude = Number(mine.coordinates.latitude);
+      const longitude = Number(mine.coordinates.longitude);
+      const coordinatesActions = document.createElement("div");
+      coordinatesActions.className = "mine-card-actions";
+      const copyCoordinates = document.createElement("button");
+      copyCoordinates.type = "button";
+      copyCoordinates.className = "mine-card-action mine-card-copy";
+      copyCoordinates.textContent = "Копіювати координати";
+      copyCoordinates.addEventListener("click", () => {
+        const coordinateText = latitude.toFixed(6) + ", " + longitude.toFixed(6);
+        const copied = () => {
+          copyCoordinates.textContent = "✓ Координати скопійовано";
+          window.setTimeout(() => { copyCoordinates.textContent = "Копіювати координати"; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(coordinateText).then(copied).catch(() => {
+            copyCoordinates.textContent = coordinateText;
+          });
+        } else {
+          const temporaryInput = document.createElement("textarea");
+          temporaryInput.value = coordinateText;
+          temporaryInput.setAttribute("readonly", "");
+          temporaryInput.style.position = "absolute";
+          temporaryInput.style.left = "-9999px";
+          document.body.appendChild(temporaryInput);
+          temporaryInput.select();
+          try {
+            if (document.execCommand("copy")) copied();
+            else copyCoordinates.textContent = coordinateText;
+          } catch (error) {
+            copyCoordinates.textContent = coordinateText;
+          }
+          temporaryInput.remove();
+        }
+      });
+      const openMap = document.createElement("a");
+      openMap.className = "mine-card-action mine-card-open-map";
+      openMap.href = "https://www.openstreetmap.org/?mlat=" + latitude + "&mlon=" + longitude +
+        "#map=12/" + latitude + "/" + longitude;
+      openMap.target = "_blank";
+      openMap.rel = "noopener noreferrer";
+      openMap.textContent = "Відкрити на карті ↗";
+      coordinatesActions.append(copyCoordinates, openMap);
+      overview.appendChild(coordinatesActions);
+    }
+
     const sourceRecords = Array.isArray(mine.sources) ? mine.sources : [];
     if (sourceRecords.length) {
       const sourcesHeading = document.createElement("h4");
