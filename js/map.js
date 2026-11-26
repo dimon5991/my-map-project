@@ -175,6 +175,7 @@
       ["Тип руди", mine.oreType],
       ["Процес", mine.process],
       ["Інші метали", Array.isArray(mine.otherMetals) ? mine.otherMetals.join(", ") : mine.otherMetals],
+      ["Потужність (млн т; як у вкладці)", mine.capacityMlnTonnes],
       ["Координати", mine.coordinates ? Number(mine.coordinates.latitude).toFixed(6) + ", " + Number(mine.coordinates.longitude).toFixed(6) : ""]
     ];
     const fieldGrid = document.createElement("dl");
@@ -191,6 +192,24 @@
       fieldGrid.appendChild(item);
     });
     overview.appendChild(fieldGrid);
+    if (mine.coordinateAccuracy || mine.coordinateNote || mine.coordinateSource) {
+      const coordinateNote = document.createElement("p");
+      coordinateNote.className = "mine-card-note";
+      coordinateNote.textContent = [
+        mine.coordinateAccuracy ? "Точність координат: " + mine.coordinateAccuracy + "." : "",
+        mine.coordinateNote || ""
+      ].filter(Boolean).join(" ");
+      overview.appendChild(coordinateNote);
+      if (mine.coordinateSource) {
+        const sourceLink = document.createElement("a");
+        sourceLink.href = mine.coordinateSource;
+        sourceLink.target = "_blank";
+        sourceLink.rel = "noopener noreferrer";
+        sourceLink.className = "mine-card-source-link";
+        sourceLink.textContent = "Технічне джерело координат";
+        overview.appendChild(sourceLink);
+      }
+    }
 
     // Mine card visual profile and practical coordinate actions.
     const hasCoordinates = Boolean(mine.coordinates &&
@@ -435,58 +454,73 @@
     ownerValue.textContent = mine.owner || "Інформацію про власників не додано.";
     owners.appendChild(ownerValue);
 
-    const office = mine.ownerOffice;
-    if (office) {
-      const officeCard = document.createElement("section");
-      officeCard.className = "mine-card-owner-office";
-      const officeHeading = document.createElement("h5");
-      officeHeading.className = "mine-card-owner-office-title";
-      officeHeading.textContent = office.company || "Компанія-власник";
-      const officeType = document.createElement("p");
-      officeType.className = "mine-card-owner-office-type";
-      officeType.textContent = office.type || "Офіс компанії";
-      const officeAddress = document.createElement("p");
-      officeAddress.textContent = office.address || "Адресу не вказано";
-      const officeCity = document.createElement("p");
-      officeCity.textContent = office.city || "";
-      officeCard.append(officeHeading, officeType, officeAddress);
-      if (officeCity.textContent) officeCard.appendChild(officeCity);
-      if (office.note) {
-        const officeNote = document.createElement("p");
-        officeNote.className = "mine-card-note";
-        officeNote.textContent = office.note;
-        officeCard.appendChild(officeNote);
-      }
-      if (office.url) {
-        const officeSource = document.createElement("a");
-        officeSource.href = office.url;
-        officeSource.target = "_blank";
-        officeSource.rel = "noopener noreferrer";
-        officeSource.className = "mine-card-owner-office-source";
-        officeSource.textContent = "Джерело адреси та контактів";
-        officeCard.appendChild(officeSource);
-      }
+    const linkedOwners = Array.isArray(mine.ownerIds)
+      ? mine.ownerIds.map((id) => (Array.isArray(window.COPPER_OWNERS) ? window.COPPER_OWNERS : []).find((owner) => owner.id === id)).filter(Boolean)
+      : [];
+    const officeRecords = linkedOwners.slice();
+    if (mine.ownerOffice) officeRecords.push(mine.ownerOffice);
+
+    if (officeRecords.length) {
+      officeRecords.forEach((office) => {
+        const officeCard = document.createElement("section");
+        officeCard.className = "mine-card-owner-office";
+        const companyName = office.name || office.company || "Компанія-власник";
+        const officeHeading = document.createElement("h5");
+        officeHeading.className = "mine-card-owner-office-title";
+        officeHeading.textContent = companyName;
+
+        const officeType = document.createElement("p");
+        officeType.className = "mine-card-owner-office-type";
+        officeType.textContent = office.officeType || office.type || "Офіс компанії";
+
+        const officeAddress = document.createElement("p");
+        officeAddress.textContent = office.address || "Адресу не вказано";
+        const officeCity = document.createElement("p");
+        officeCity.textContent = [office.city, office.country].filter(Boolean).join(", ");
+        officeCard.append(officeHeading, officeType, officeAddress);
+        if (officeCity.textContent) officeCard.appendChild(officeCity);
+
+        const accuracyText = office.coordinateAccuracy || office.note;
+        if (accuracyText) {
+          const officeNote = document.createElement("p");
+          officeNote.className = "mine-card-note";
+          officeNote.textContent = accuracyText;
+          officeCard.appendChild(officeNote);
+        }
+
+        const officeSourceUrl = office.source || office.url;
+        if (officeSourceUrl) {
+          const officeSource = document.createElement("a");
+          officeSource.href = officeSourceUrl;
+          officeSource.target = "_blank";
+          officeSource.rel = "noopener noreferrer";
+          officeSource.className = "mine-card-owner-office-source";
+          officeSource.textContent = "Джерело адреси та контактів";
+          officeCard.appendChild(officeSource);
+        }
+        owners.appendChild(officeCard);
+      });
+
       const showOfficeButton = document.createElement("button");
       showOfficeButton.type = "button";
       showOfficeButton.className = "mine-card-owner-office-button";
-      showOfficeButton.textContent = "Показати офіс і зв’язок на карті";
+      showOfficeButton.textContent = "Показати офіси й зв’язки на карті";
       showOfficeButton.addEventListener("click", (event) => {
         event.preventDefault();
         event.stopPropagation();
         showOwnershipConnection(mine);
-        if (Number.isFinite(office.latitude) && Number.isFinite(office.longitude)) {
-          const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
-          if (mineEntry) {
-            const bounds = L.latLngBounds(
-              mineEntry.marker.getLatLng(),
-              [office.latitude, office.longitude]
-            );
-            map.fitBounds(bounds, { padding: [55, 55], maxZoom: 5 });
-          }
+        const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
+        if (mineEntry) {
+          const bounds = L.latLngBounds([mineEntry.marker.getLatLng()]);
+          officeRecords.forEach((office) => {
+            const lat = Number(office.lat !== undefined ? office.lat : office.latitude);
+            const lng = Number(office.lng !== undefined ? office.lng : office.longitude);
+            if (Number.isFinite(lat) && Number.isFinite(lng)) bounds.extend([lat, lng]);
+          });
+          map.fitBounds(bounds, { padding: [55, 55], maxZoom: 5 });
         }
       });
-      officeCard.appendChild(showOfficeButton);
-      owners.appendChild(officeCard);
+      owners.appendChild(showOfficeButton);
     } else if (!/\\bBHP\\b/i.test(mine.owner || "")) {
       const ownersNote = document.createElement("p");
       ownersNote.className = "mine-card-note";
@@ -685,13 +719,61 @@
   bhpPopup.append(bhpTitle, bhpDescription, bhpLocation, bhpCoords);
   bhpOwnerMarker.bindPopup(bhpPopup, { maxWidth: 260 });
 
+  // Permanent corporate owner markers for Brazilian deposits.
+  const ownerMarkers = new Map();
+  (Array.isArray(window.COPPER_OWNERS) ? window.COPPER_OWNERS : []).forEach((owner) => {
+    const lat = Number(owner.lat), lng = Number(owner.lng);
+    if (!owner || !owner.id || !Number.isFinite(lat) || !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
+    const label = document.createElement("span");
+    label.className = "owner-office-icon";
+    label.textContent = owner.shortName || owner.name || "HQ";
+    const width = Math.max(46, Math.min(100, label.textContent.length * 8 + 18));
+    const icon = L.divIcon({
+      className: "owner-office-icon-wrap", html: label,
+      iconSize: [width, 30], iconAnchor: [width / 2, 15]
+    });
+    const officeMarker = L.marker([lat, lng], {
+      title: owner.name + " — " + (owner.officeType || "офіс"), alt: owner.name
+    }).addTo(map).setIcon(icon);
+    const popup = document.createElement("section");
+    popup.className = "bhp-owner-popup";
+    const heading = document.createElement("h3");
+    heading.textContent = owner.name;
+    const type = document.createElement("p");
+    type.textContent = owner.officeType || "Офіс власника";
+    const address = document.createElement("p");
+    address.textContent = owner.address || [owner.city, owner.country].filter(Boolean).join(", ");
+    const coordinates = document.createElement("small");
+    coordinates.textContent = lat.toFixed(6) + ", " + lng.toFixed(6) +
+      (owner.coordinateAccuracy ? " · " + owner.coordinateAccuracy : "");
+    popup.append(heading, type, address, coordinates);
+    if (owner.source) {
+      const source = document.createElement("a");
+      source.href = owner.source;
+      source.target = "_blank";
+      source.rel = "noopener noreferrer";
+      source.textContent = "Сторінка з адресою офісу";
+      source.className = "mine-card-owner-office-source";
+      popup.appendChild(source);
+    }
+    officeMarker.bindPopup(popup, { maxWidth: 320 });
+    ownerMarkers.set(owner.id, officeMarker);
+  });
+
+
   let activeOwnershipLine = null;
   let activeOwnerOfficeMarker = null;
+  let activeOwnerOfficeLines = [];
   function clearOwnershipConnection() {
     if (activeOwnershipLine && map.hasLayer(activeOwnershipLine)) map.removeLayer(activeOwnershipLine);
     if (activeOwnerOfficeMarker && map.hasLayer(activeOwnerOfficeMarker)) map.removeLayer(activeOwnerOfficeMarker);
+    activeOwnerOfficeLines.forEach((line) => {
+      if (map.hasLayer(line)) map.removeLayer(line);
+    });
     activeOwnershipLine = null;
     activeOwnerOfficeMarker = null;
+    activeOwnerOfficeLines = [];
   }
 
   function showOwnershipConnection(mine) {
@@ -700,7 +782,29 @@
     const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
     if (!mineEntry) return;
 
-    // Escondida retains its existing BHP marker and connection.
+    // Brazilian deposits may have more than one recorded owner.
+    const ownerIds = Array.isArray(mine.ownerIds) ? mine.ownerIds : [];
+    if (ownerIds.length) {
+      const from = mineEntry.marker.getLatLng();
+      ownerIds.forEach((ownerId) => {
+        const officeMarker = ownerMarkers.get(ownerId);
+        if (!officeMarker) return;
+        const line = L.polyline([from, officeMarker.getLatLng()], {
+          className: "ownership-link-line",
+          color: "#65d8ff",
+          weight: 4,
+          opacity: 0.95,
+          dashArray: "10 12",
+          lineCap: "round",
+          interactive: false
+        }).addTo(map);
+        line.bringToFront();
+        activeOwnerOfficeLines.push(line);
+      });
+      return;
+    }
+
+    // Escondida and all other legacy records retain existing office behavior.
     const office = mine.ownerOffice;
     if (!office && /\\bBHP\\b/i.test(mine.owner || "")) {
       const from = mineEntry.marker.getLatLng();
