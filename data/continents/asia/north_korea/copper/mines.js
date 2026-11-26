@@ -19,7 +19,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     depositType: "Не уточнено",
     oreType: "Мідна руда; генетичний тип не уточнено",
     otherMetals: [],
-    coordinates: { latitude: 41.366, longitude: 128.157 },
+    coordinates: { latitude: 41.276774, longitude: 128.261089 },
     geometry: null,
     productionMetrics: [
       {
