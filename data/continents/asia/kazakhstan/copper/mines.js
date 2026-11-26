@@ -9,6 +9,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-aktogay",
     "name": "Aktogay",
+    "country": "Казахстан",
     "region": "область Абай",
     "owner": "KAZ Minerals",
     "process": "Відкритий видобуток, збагачення та SX-EW",
@@ -36,6 +37,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-bozshakol",
     "name": "Bozshakol",
+    "country": "Казахстан",
     "region": "Павлодарська область",
     "owner": "KAZ Minerals",
     "process": "Відкритий видобуток і збагачення",
@@ -64,6 +66,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-artemyevsky",
     "name": "Artemyevsky",
+    "country": "Казахстан",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -93,6 +96,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-irtyshsky",
     "name": "Irtyshsky",
+    "country": "Казахстан",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -122,6 +126,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-orlovsky",
     "name": "Orlovsky",
+    "country": "Казахстан",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -151,6 +156,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-ridder-district",
     "name": "Ridder mining district",
+    "country": "Казахстан",
     "region": "Східноказахстанська область",
     "owner": "Kazzinc / Glencore",
     "process": "Підземний видобуток і збагачення",
@@ -177,6 +183,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-maleevsky",
     "name": "Maleevsky",
+    "country": "Казахстан",
     "region": "Східноказахстанська область",
     "owner": "Kazzinc / Glencore",
     "process": "Підземний видобуток і збагачення",
@@ -203,6 +210,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-nurkazgan",
     "name": "Nurkazgan",
+    "country": "Казахстан",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Відкритий і підземний видобуток; збагачення",
@@ -227,6 +235,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-abyz",
     "name": "Abyz",
+    "country": "Казахстан",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток і збагачення",
@@ -253,6 +262,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-khadzhikongan",
     "name": "Khadzhikongan",
+    "country": "Казахстан",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -277,6 +287,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-kusmuryn-aktabasu",
     "name": "Kusmuryn–Aktabasu",
+    "country": "Казахстан",
     "region": "область Абай",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -306,6 +317,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-zhezkazgan",
     "name": "Zhezkazgan copper mines",
+    "country": "Казахстан",
     "region": "область Ұлытау",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток і збагачення",
@@ -333,6 +345,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-zhomart",
     "name": "Zhomart (Cu)",
+    "country": "Казахстан",
     "region": "область Ұлытау",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток",
@@ -360,6 +373,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-kounrad",
     "name": "Kounrad",
+    "country": "Казахстан",
     "region": "Карагандинська область",
     "owner": "Central Asia Metals",
     "process": "Вилучення міді методом SX-EW з відвалів і техногенних матеріалів",
@@ -381,6 +395,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-sayak",
     "name": "Sayak",
+    "country": "Казахстан",
     "region": "область Абай",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -405,6 +420,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-shatyrkul",
     "name": "Shatyrkul (Shartykul)",
+    "country": "Казахстан",
     "region": "Жамбильська область",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -426,6 +442,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-borly",
     "name": "Borly",
+    "country": "Казахстан",
     "region": "Карагандинська область",
     "owner": "Kazakhmys / Borly",
     "process": "Видобуток і виробництво мідних катодів",
@@ -447,6 +464,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-varvara",
     "name": "Varvara",
+    "country": "Казахстан",
     "region": "Костанайська область",
     "owner": "Solidcore Resources",
     "process": "Видобуток і збагачення",
@@ -470,6 +488,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-komar",
     "name": "Kamar (Komar)",
+    "country": "Казахстан",
     "region": "Костанайська область",
     "owner": "Solidcore Resources",
     "process": "Видобуток і збагачення",
@@ -493,6 +512,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-aktobe-50-october",
     "name": "50 Let Oktyabrya",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "Copper Technology / KazGeorud",
     "process": "Відкритий видобуток і збагачення",
@@ -516,6 +536,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-priorskoye",
     "name": "Priorskoye",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "Copper Technology",
     "process": "Відкритий видобуток",
@@ -543,6 +564,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-avangard",
     "name": "Avangard",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "Aktobe Copper Company",
     "process": "Відкритий видобуток і збагачення",
@@ -570,6 +592,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-vesenne-aralchinskoye",
     "name": "Vesenne-Aralchinskoye",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "Aktobe Copper Company",
     "process": "Видобуток і збагачення",
@@ -593,6 +616,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-kundyzdy",
     "name": "Kundyzdy",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "KazGeorud",
     "process": "Відкритий видобуток",
@@ -618,6 +642,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   {
     "id": "kz-benkala",
     "name": "Benkala",
+    "country": "Казахстан",
     "region": "Актюбінська область",
     "owner": "SN Mining",
     "process": "Вилуговування та SX-EW",
