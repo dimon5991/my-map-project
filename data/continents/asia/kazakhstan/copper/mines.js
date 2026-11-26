@@ -624,8 +624,8 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "oreType": "Мідна руда",
     "otherMetals": [],
     "coordinates": {
-      "latitude": 49.065,
-      "longitude": 58.4553
+      "latitude": 49.058120,
+      "longitude": 58.555756
     },
     "notes": "Координата промислового майданчика з екологічного звіту KazGeorud за 2023 рік.",
     "sources": [
