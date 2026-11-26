@@ -185,7 +185,7 @@
       m && m.coordinates && Number.isFinite(Number(m.coordinates.latitude)) &&
       Number.isFinite(Number(m.coordinates.longitude))).map(m => ({
         id: m.id, name: m.name || "Мідний об’єкт", country: m.country || "", region: m.region || "",
-        owner: m.owner || "", status: m.status || "", process: m.process || "",
+        owner: m.owner || "", ownerIds: Array.isArray(m.ownerIds) ? m.ownerIds : [], status: m.status || "", process: m.process || "",
         depositType: m.depositType || "", oreType: m.oreType || "",
         otherMetals: Array.isArray(m.otherMetals) ? m.otherMetals.join(", ") : (m.otherMetals || ""),
         lat: Number(m.coordinates.latitude), lng: Number(m.coordinates.longitude), kind: "mine"
@@ -196,9 +196,15 @@
       if (Array.isArray(saved)) custom = saved.filter(p => p && Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lng)))
         .map((p, i) => ({ id: "custom-" + i, name: p.name || "Власна мітка", lat: Number(p.lat), lng: Number(p.lng), kind: "custom" }));
     } catch (_) {}
-    return [...mines, ...custom, { id: "bhp-office", name: "BHP Group", country: "Австралія",
-      region: "Melbourne", owner: "Корпоративний офіс", status: "Офіс компанії",
-      lat: -37.815158, lng: 144.968108, kind: "owner" }];
+    const offices = (Array.isArray(window.COPPER_OWNERS) ? window.COPPER_OWNERS : [])
+      .filter(o => o && o.id && Number.isFinite(Number(o.lat)) && Number.isFinite(Number(o.lng)))
+      .map(o => ({ id:o.id, ownerId:o.id, name:o.name, country:o.country || "",
+        region:o.city || "", address:o.address || "", owner:o.officeType || "",
+        lat:Number(o.lat), lng:Number(o.lng), kind:"owner" }));
+    return [...mines, ...custom, ...offices, { id:"bhp-office", ownerId:"bhp",
+      name:"BHP Group", country:"Австралія", region:"Melbourne",
+      owner:"Корпоративний офіс", status:"Офіс компанії",
+      lat:-37.815158, lng:144.968108, kind:"owner" }];
   }
 
   function vectorFor(lat, lng, radius) {
@@ -215,6 +221,7 @@
     fields.replaceChildren();
     [["Власник", point.owner], ["Поточний стан", point.status], ["Процес", point.process],
       ["Тип родовища", point.depositType], ["Тип руди", point.oreType], ["Інші метали", point.otherMetals],
+      ["Адреса офісу", point.address],
       ["Координати", Number(point.lat).toFixed(6) + ", " + Number(point.lng).toFixed(6)]].forEach(([name, value]) => {
       if (!value) return;
       const dt = document.createElement("dt"), dd = document.createElement("dd");
@@ -229,7 +236,7 @@
     overlayObjects = [];
     pointObjects = [];
     const points = getPoints();
-    const bhp = points.find(p => p.kind === "owner");
+    const ownerPoints = points.filter(p => p.kind === "owner");
     points.forEach(point => {
       const color = point.kind === "mine" ? 0x4bd5ff : point.kind === "owner" ? 0x9af0c6 : 0xffc857;
       // Larger emissive-looking markers sit clearly above the sphere's polygon surface.
@@ -244,10 +251,14 @@
       pointObjects.push(marker);
       overlayObjects.push(marker);
     });
-    if (bhp) {
-      points.filter(p => p.kind === "mine" && /BHP/i.test(p.owner || "")).forEach(point => {
+    points.filter(p => p.kind === "mine").forEach(point => {
+      let ownerIds = Array.isArray(point.ownerIds) ? point.ownerIds : [];
+      if (!ownerIds.length && /BHP/i.test(point.owner || "")) ownerIds = ["bhp"];
+      ownerIds.forEach(ownerId => {
+        const office = ownerPoints.find(p => p.ownerId === ownerId || p.id === ownerId);
+        if (!office) return;
         const start = vectorFor(point.lat, point.lng, 5.035);
-        const end = vectorFor(bhp.lat, bhp.lng, 5.035);
+        const end = vectorFor(office.lat, office.lng, 5.035);
         const mid = start.clone().add(end).multiplyScalar(0.5).normalize().multiplyScalar(5.8);
         const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
         const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(72)),
@@ -256,7 +267,7 @@
         group.add(line);
         overlayObjects.push(line);
       });
-    }
+    });
   }
 
   function resize() {
