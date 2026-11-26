@@ -3,13 +3,15 @@
  * Статус звірено з USGS, The Mineral Industry of Kazakhstan in 2024.
  * Координати, позначені як орієнтовні в notes, показують район об'єкта,
  * а не точну межу ліцензійної ділянки чи окремої виробки.
- * Не включено Zhaisan: USGS позначає його як inactive.
+ * Zhaisan включено: USGS повідомляє про відновлення робіт у листопаді 2024 року.
+ * 50 Let Oktyabrya вилучено зі шару діючих об’єктів: у пізнішому переліку 2025 року воно позначене як idle.
  */
 window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES : []).concat([
   {
     "id": "kz-aktogay",
     "name": "Aktogay",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "область Абай",
     "owner": "KAZ Minerals",
     "process": "Відкритий видобуток, збагачення та SX-EW",
@@ -38,6 +40,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-bozshakol",
     "name": "Bozshakol",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Павлодарська область",
     "owner": "KAZ Minerals",
     "process": "Відкритий видобуток і збагачення",
@@ -67,6 +70,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-artemyevsky",
     "name": "Artemyevsky",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -97,6 +101,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-irtyshsky",
     "name": "Irtyshsky",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -127,6 +132,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-orlovsky",
     "name": "Orlovsky",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Східноказахстанська область",
     "owner": "KAZ Minerals",
     "process": "Підземний видобуток і збагачення",
@@ -157,6 +163,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-ridder-district",
     "name": "Ridder mining district",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Східноказахстанська область",
     "owner": "Kazzinc / Glencore",
     "process": "Підземний видобуток і збагачення",
@@ -184,6 +191,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-maleevsky",
     "name": "Maleevsky",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Східноказахстанська область",
     "owner": "Kazzinc / Glencore",
     "process": "Підземний видобуток і збагачення",
@@ -211,6 +219,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-nurkazgan",
     "name": "Nurkazgan",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Відкритий і підземний видобуток; збагачення",
@@ -236,6 +245,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-abyz",
     "name": "Abyz",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток і збагачення",
@@ -263,6 +273,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-khadzhikongan",
     "name": "Khadzhikongan",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Карагандинська область",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -288,6 +299,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-kusmuryn-aktabasu",
     "name": "Kusmuryn–Aktabasu",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "область Абай",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -316,8 +328,9 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
   },
   {
     "id": "kz-zhezkazgan",
-    "name": "Zhezkazgan copper mines",
+    "name": "Zhezkazgan–Zhilandinsky copper complex",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "область Ұлытау",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток і збагачення",
@@ -330,7 +343,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
       "latitude": 48.122,
       "longitude": 67.392
     },
-    "notes": "Узагальнена точка мідного гірничого комплексу: Північний, Південний і Східний Жезказган та пов’язані ділянки. Координата приблизна; не показує межі кожної шахти.",
+    "notes": "Узагальнена точка мідного гірничого комплексу: Північний, Південний і Східний Жезказган та Жиландинська група (зокрема Zhilandinsky). Координата приблизна; не показує межі кожної шахти.",
     "sources": [
       {
         "title": "USGS — The Mineral Industry of Kazakhstan in 2024",
@@ -346,6 +359,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-zhomart",
     "name": "Zhomart (Cu)",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "область Ұлытау",
     "owner": "Kazakhmys",
     "process": "Підземний видобуток",
@@ -374,6 +388,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-kounrad",
     "name": "Kounrad",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Карагандинська область",
     "owner": "Central Asia Metals",
     "process": "Вилучення міді методом SX-EW з відвалів і техногенних матеріалів",
@@ -396,6 +411,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-sayak",
     "name": "Sayak",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "область Абай",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -421,6 +437,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-shatyrkul",
     "name": "Shatyrkul (Shartykul)",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Жамбильська область",
     "owner": "Kazakhmys",
     "process": "Видобуток і збагачення",
@@ -443,6 +460,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-borly",
     "name": "Borly",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Карагандинська область",
     "owner": "Kazakhmys / Borly",
     "process": "Видобуток і виробництво мідних катодів",
@@ -465,6 +483,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-varvara",
     "name": "Varvara",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Костанайська область",
     "owner": "Solidcore Resources",
     "process": "Видобуток і збагачення",
@@ -489,6 +508,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-komar",
     "name": "Kamar (Komar)",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Костанайська область",
     "owner": "Solidcore Resources",
     "process": "Видобуток і збагачення",
@@ -510,33 +530,10 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     ]
   },
   {
-    "id": "kz-aktobe-50-october",
-    "name": "50 Let Oktyabrya",
-    "country": "Казахстан",
-    "region": "Актюбінська область",
-    "owner": "Copper Technology / KazGeorud",
-    "process": "Відкритий видобуток і збагачення",
-    "depositType": "Відкрите",
-    "oreType": "Мідно-колчеданна руда",
-    "otherMetals": [
-      "Zn"
-    ],
-    "coordinates": {
-      "latitude": 50.47991,
-      "longitude": 59.1083
-    },
-    "notes": "Діючий рудник за переліком USGS; точка орієнтовна.",
-    "sources": [
-      {
-        "title": "USGS — The Mineral Industry of Kazakhstan in 2024",
-        "url": "https://pubs.usgs.gov/myb/vol3/2024/myb3-2024-kazakhstan.pdf"
-      }
-    ]
-  },
-  {
     "id": "kz-priorskoye",
     "name": "Priorskoye",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Актюбінська область",
     "owner": "Copper Technology",
     "process": "Відкритий видобуток",
@@ -565,6 +562,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-avangard",
     "name": "Avangard",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Актюбінська область",
     "owner": "Aktobe Copper Company",
     "process": "Відкритий видобуток і збагачення",
@@ -593,6 +591,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-vesenne-aralchinskoye",
     "name": "Vesenne-Aralchinskoye",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Актюбінська область",
     "owner": "Aktobe Copper Company",
     "process": "Видобуток і збагачення",
@@ -617,6 +616,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-kundyzdy",
     "name": "Kundyzdy",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Актюбінська область",
     "owner": "KazGeorud",
     "process": "Відкритий видобуток",
@@ -643,6 +643,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "id": "kz-benkala",
     "name": "Benkala",
     "country": "Казахстан",
+    "status": "Діючий об’єкт (перелік USGS 2024)",
     "region": "Актюбінська область",
     "owner": "SN Mining",
     "process": "Вилуговування та SX-EW",
@@ -659,6 +660,25 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
         "title": "USGS — The Mineral Industry of Kazakhstan in 2024",
         "url": "https://pubs.usgs.gov/myb/vol3/2024/myb3-2024-kazakhstan.pdf"
       }
+    ]
+  }
+,
+  {
+    "id": "kz-zhaisan",
+    "name": "Zhaisan",
+    "country": "Казахстан",
+    "status": "Роботу відновлено у листопаді 2024 року (USGS)",
+    "region": "Жамбильська область",
+    "owner": "Zhanashyr Project LLP (Kazakhmys)",
+    "process": "Підземний видобуток мідної руди; переробка на Шатиркульській фабриці",
+    "depositType": "Підземне",
+    "oreType": "Мідно-сульфідна руда",
+    "otherMetals": ["Ag", "Au"],
+    "coordinates": { "latitude": 43.5250, "longitude": 74.4230 },
+    "notes": "Координата є приблизним центром гірничого відводу за опублікованим екологічним описом, а не точкою шахтного порталу. USGS повідомляє, що роботу на шахті відновили у листопаді 2024 року.",
+    "sources": [
+      { "title": "USGS — Kazakhstan, 2024: Zhaisan Mine resumed work in November 2024", "url": "https://www.usgs.gov/centers/national-minerals-information-center/kazakhstan" },
+      { "title": "Екологічний портал Казахстану — координати та опис родовища Жайсан", "url": "https://ecoportal.kz/Disscusion/DisHearings/LoadFile/120608" }
     ]
   }
 ]);
