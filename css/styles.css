@@ -666,6 +666,35 @@ html, body, .map-page {
 
 
 /* Власник BHP та анімований зв'язок із шахтою */
+.owner-office-icon-wrap {
+  background: transparent;
+  border: 0;
+}
+.owner-office-icon {
+  display: grid;
+  min-width: 46px;
+  height: 30px;
+  padding: 0 7px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 8px;
+  background: #173a50;
+  color: #f5fbff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .32);
+  font: 800 11px/1 system-ui, sans-serif;
+  letter-spacing: .35px;
+  white-space: nowrap;
+}
+.owner-office-popup {
+  min-width: 210px;
+  max-width: 280px;
+  color: #17212b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.owner-office-popup h3 { margin: 0 0 7px; font-size: 16px; }
+.owner-office-popup p { margin: 5px 0; }
+.owner-office-popup small { display: block; margin: 6px 0; color: #64748b; }
 .bhp-owner-icon-wrap {
   background: transparent;
   border: 0;
