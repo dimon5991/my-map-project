@@ -343,7 +343,7 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
       "latitude": 48.122,
       "longitude": 67.392
     },
-    "notes": "Узагальнена точка мідного гірничого комплексу: Північний, Південний і Східний Жезказган та Жиландинська група (зокрема Zhilandinsky). Координата приблизна; не показує межі кожної шахти.",
+    "notes": "Узагальнена точка мідного гірничого комплексу: Північний, Південний і Східний Жезказган та пов’язані ділянки. Координата приблизна; не показує межі кожної шахти. Жиландинська група має окрему мітку.",
     "sources": [
       {
         "title": "USGS — The Mineral Industry of Kazakhstan in 2024",
@@ -679,6 +679,25 @@ window.COPPER_MINES = (Array.isArray(window.COPPER_MINES) ? window.COPPER_MINES 
     "sources": [
       { "title": "USGS — Kazakhstan, 2024: Zhaisan Mine resumed work in November 2024", "url": "https://www.usgs.gov/centers/national-minerals-information-center/kazakhstan" },
       { "title": "Екологічний портал Казахстану — координати та опис родовища Жайсан", "url": "https://ecoportal.kz/Disscusion/DisHearings/LoadFile/120608" }
+    ]
+  }
+,
+  {
+    "id": "kz-zhilandinsky",
+    "name": "Zhilandinsky",
+    "country": "Казахстан",
+    "status": "Діючий об’єкт (USGS 2024; робочі майданчики підтверджені 2025)",
+    "region": "область Ұлытау",
+    "owner": "Kazakhmys",
+    "process": "Відкритий і підземний видобуток мідної руди",
+    "depositType": "Відкрите / підземне",
+    "oreType": "Мідно-сульфідна руда",
+    "otherMetals": [],
+    "coordinates": { "latitude": 48.1605, "longitude": 67.5572 },
+    "notes": "Координата є приблизним центром опублікованого полігону виробничої ділянки Жиландинської групи за матеріалами громадських слухань Kazakhmys від 12 серпня 2025 року; не є точкою окремого кар’єру.",
+    "sources": [
+      { "title": "USGS — The Mineral Industry of Kazakhstan in 2024", "url": "https://pubs.usgs.gov/myb/vol3/2024/myb3-2024-kazakhstan.pdf" },
+      { "title": "Kazakhmys — громадські слухання щодо Жиландинської групи, координати ділянки (2025)", "url": "https://hearings.ndbecology.gov.kz/Public/PubHearings/LoadFile/228662" }
     ]
   }
 ]);
