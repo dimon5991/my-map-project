@@ -143,7 +143,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -6.4330, longitude: -50.0670 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Координати перенесено з вкладки; незалежного підтвердження точного центру кар’єру не знайдено.",
-    coordinateSource: "https://valebasemetals.com/contact-us/"
   },
   {
     id: "br-chapada",
@@ -189,7 +188,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -9.6170, longitude: -36.7830 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Координати з вкладки; точний центр родовища незалежно не підтверджено. Значення потужності 46299 показано як у вихідній клітинці; одиницю/значення потрібно перевірити — воно виглядає аномальним для колонки «млн т».",
-    coordinateSource: "https://vale-verde.com/index.php/contato/"
   },
   {
     id: "br-tucuma",
@@ -220,7 +218,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -6.4000, longitude: -50.1500 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Збережено координати з вкладки; незалежного підтвердження точки Alvo 118 не знайдено.",
-    coordinateSource: "https://valebasemetals.com/contact-us/"
   },
   {
     id: "br-surubim",
@@ -267,7 +264,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -6.4670, longitude: -49.9170 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Збережено координати вкладки; незалежного точного координатного джерела не знайдено.",
-    coordinateSource: "https://valebasemetals.com/contact-us/"
   },
   {
     id: "br-alemao",
@@ -283,7 +279,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -6.0500, longitude: -50.5670 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Збережено координати вкладки; незалежного підтвердження точного розташування Alemão не знайдено.",
-    coordinateSource: "https://valebasemetals.com/contact-us/"
   },
   {
     id: "br-furnas",
@@ -329,7 +324,6 @@ const brazilCopperMines = [
     coordinates: { latitude: -6.4830, longitude: -50.1500 },
     coordinateAccuracy: "за вихідною вкладкою",
     coordinateNote: "Збережено координати вкладки; незалежного підтвердження саме точки Vermelho не знайдено.",
-    coordinateSource: "https://horizonminerals.com.au/wp-content/uploads/2024/06/2736540.pdf"
   },
   {
     id: "br-santa-luz",
