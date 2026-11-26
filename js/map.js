@@ -5,7 +5,7 @@
   if (!mapElement || typeof L === "undefined") return;
 
   const STORAGE_KEY = "my-map-project-saved-markers";
-  const map = L.map(mapElement, { center: [20, 0], zoom: 2, minZoom: 2, worldCopyJump: true, zoomControl: false });
+  const map = L.map(mapElement, { center: [48.0, 67.0], zoom: 4, minZoom: 2, worldCopyJump: true, zoomControl: false });
   L.control.zoom({ position: "bottomright" }).addTo(map);
 
   const streetLayer = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
