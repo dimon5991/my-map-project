@@ -175,6 +175,7 @@
       ["Тип руди", mine.oreType],
       ["Процес", mine.process],
       ["Інші метали", Array.isArray(mine.otherMetals) ? mine.otherMetals.join(", ") : mine.otherMetals],
+      ["Потужність (млн т; як у вкладці)", mine.capacityMlnTonnes],
       ["Координати", mine.coordinates ? Number(mine.coordinates.latitude).toFixed(6) + ", " + Number(mine.coordinates.longitude).toFixed(6) : ""]
     ];
     const fieldGrid = document.createElement("dl");
@@ -191,6 +192,24 @@
       fieldGrid.appendChild(item);
     });
     overview.appendChild(fieldGrid);
+    if (mine.coordinateAccuracy || mine.coordinateNote || mine.coordinateSource) {
+      const verificationNote = document.createElement("p");
+      verificationNote.className = "mine-card-note";
+      verificationNote.textContent = [
+        mine.coordinateAccuracy ? "Точність координат: " + mine.coordinateAccuracy + "." : "",
+        mine.coordinateNote || ""
+      ].filter(Boolean).join(" ");
+      overview.appendChild(verificationNote);
+      if (mine.coordinateSource) {
+        const sourceLink = document.createElement("a");
+        sourceLink.href = mine.coordinateSource;
+        sourceLink.target = "_blank";
+        sourceLink.rel = "noopener noreferrer";
+        sourceLink.className = "mine-card-source-link";
+        sourceLink.textContent = "Джерело координат";
+        overview.appendChild(sourceLink);
+      }
+    }
 
     const production = document.createElement("div");
     production.className = "mine-card-panel";
@@ -290,7 +309,7 @@
     owners.appendChild(ownerValue);
     const ownersNote = document.createElement("p");
     ownersNote.className = "mine-card-note";
-    ownersNote.textContent = "За потреби власників можна буде рознести на окремі записи з частками, датами та джерелами.";
+    ownersNote.textContent = "На карті показано офіси власників із таблиці. Пунктирні лінії з’єднують це родовище з офісом кожного зазначеного власника. Якщо частки не наведені у вкладці, вони тут не припускаються.";
     owners.appendChild(ownersNote);
 
     const panels = { overview, production, logistics, owners };
@@ -458,7 +477,7 @@
     mineMarkers.push({ data: mine, marker });
   });
 
-  // BHP corporate owner point requested by the user (Melbourne coordinates).
+  // Corporate owner offices. Keep BHP for compatibility with existing Chile records.
   const bhpCoordinates = [-37.815158, 144.968108];
   const bhpIcon = L.divIcon({
     className: "bhp-owner-icon-wrap",
@@ -476,7 +495,7 @@
   const bhpTitle = document.createElement("h3");
   bhpTitle.textContent = "BHP Group";
   const bhpDescription = document.createElement("p");
-  bhpDescription.textContent = "Власник частки Escondida · корпоративна локація";
+  bhpDescription.textContent = "Корпоративний офіс — маркер для наявних записів карти";
   const bhpLocation = document.createElement("p");
   bhpLocation.textContent = "Мельбурн, Австралія";
   const bhpCoords = document.createElement("small");
@@ -484,29 +503,85 @@
   bhpPopup.append(bhpTitle, bhpDescription, bhpLocation, bhpCoords);
   bhpOwnerMarker.bindPopup(bhpPopup, { maxWidth: 260 });
 
-  let activeOwnershipLine = null;
+  const ownerMarkers = new Map([["bhp", bhpOwnerMarker]]);
+  (Array.isArray(window.COPPER_OWNERS) ? window.COPPER_OWNERS : []).forEach((owner) => {
+    const lat = Number(owner.lat), lng = Number(owner.lng);
+    if (!owner || !owner.id || !Number.isFinite(lat) || !Number.isFinite(lng) ||
+        lat < -90 || lat > 90 || lng < -180 || lng > 180) return;
+
+    const label = document.createElement("span");
+    label.className = "owner-office-icon";
+    label.textContent = owner.shortName || owner.name || "OFFICE";
+    const width = Math.max(48, Math.min(100, label.textContent.length * 8 + 18));
+    const icon = L.divIcon({
+      className: "owner-office-icon-wrap",
+      html: label,
+      iconSize: [width, 30],
+      iconAnchor: [width / 2, 15]
+    });
+    const marker = L.marker([lat, lng], {
+      title: (owner.name || "Офіс власника") + " — " + (owner.officeType || "офіс"),
+      alt: owner.name || "Офіс власника"
+    }).addTo(map).setIcon(icon);
+
+    const popup = document.createElement("section");
+    popup.className = "owner-office-popup";
+    const heading = document.createElement("h3");
+    heading.textContent = owner.name || "Офіс власника";
+    const type = document.createElement("p");
+    type.textContent = owner.officeType || "Офіс власника";
+    const address = document.createElement("p");
+    address.textContent = owner.address || [owner.city, owner.country].filter(Boolean).join(", ");
+    const accuracy = document.createElement("small");
+    accuracy.textContent = "Координати офісу: " + lat.toFixed(5) + ", " + lng.toFixed(5) +
+      (owner.coordinateAccuracy ? " · " + owner.coordinateAccuracy : "");
+    popup.append(heading, type, address, accuracy);
+
+    if (owner.source) {
+      const source = document.createElement("a");
+      source.href = owner.source;
+      source.target = "_blank";
+      source.rel = "noopener noreferrer";
+      source.textContent = "Сторінка з адресою офісу";
+      source.className = "mine-card-source-link";
+      popup.appendChild(source);
+    }
+    marker.bindPopup(popup, { maxWidth: 300 });
+    ownerMarkers.set(owner.id, marker);
+  });
+
+  let activeOwnershipLines = [];
   function clearOwnershipConnection() {
-    if (activeOwnershipLine && map.hasLayer(activeOwnershipLine)) map.removeLayer(activeOwnershipLine);
-    activeOwnershipLine = null;
+    activeOwnershipLines.forEach((line) => {
+      if (map.hasLayer(line)) map.removeLayer(line);
+    });
+    activeOwnershipLines = [];
   }
 
   function showOwnershipConnection(mine) {
     clearOwnershipConnection();
-    if (!mine || !/\bBHP\b/i.test(mine.owner || "")) return;
+    if (!mine) return;
     const mineEntry = mineMarkers.find((item) => item.data.id === mine.id);
     if (!mineEntry) return;
+    let ownerIds = Array.isArray(mine.ownerIds) ? mine.ownerIds : [];
+    if (!ownerIds.length && /\bBHP\b/i.test(mine.owner || "")) ownerIds = ["bhp"];
     const from = mineEntry.marker.getLatLng();
-    const to = bhpOwnerMarker.getLatLng();
-    activeOwnershipLine = L.polyline([from, to], {
-      className: "ownership-link-line",
-      color: "#65d8ff",
-      weight: 4,
-      opacity: 0.95,
-      dashArray: "10 12",
-      lineCap: "round",
-      interactive: false
-    }).addTo(map);
-    activeOwnershipLine.bringToFront();
+
+    ownerIds.forEach((ownerId) => {
+      const ownerMarker = ownerMarkers.get(ownerId);
+      if (!ownerMarker) return;
+      const line = L.polyline([from, ownerMarker.getLatLng()], {
+        className: "ownership-link-line",
+        color: "#65d8ff",
+        weight: 4,
+        opacity: 0.95,
+        dashArray: "10 12",
+        lineCap: "round",
+        interactive: false
+      }).addTo(map);
+      line.bringToFront();
+      activeOwnershipLines.push(line);
+    });
   }
 
   map.on("popupclose", clearOwnershipConnection);
